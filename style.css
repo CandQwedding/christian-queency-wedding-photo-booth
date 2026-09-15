@@ -868,3 +868,58 @@ main>section:nth-of-type(even)::before{right:-90px;bottom:30px}
 .camera-overlay{z-index:4!important;}
 .frame-art{object-fit:fill!important;}
 #capturedPhoto{z-index:3;}
+
+
+/* === FINAL REFERENCE FRAME / CAMERA ALIGNMENT === */
+.camera-stage{
+  aspect-ratio:1600 / 1068 !important;
+  position:relative !important;
+  background:#fffaf6 !important;
+  overflow:hidden !important;
+}
+#cameraVideo,
+#capturedPhoto{
+  position:absolute !important;
+  left:32.9375% !important;
+  top:6.2734% !important;
+  width:61.6875% !important;
+  height:48.9700% !important;
+  object-fit:cover !important;
+  z-index:1 !important;
+  transform:scaleX(-1);
+  background:#d9b4a8;
+}
+#capturedPhoto{z-index:3 !important;display:none;}
+.camera-overlay{
+  position:absolute !important;
+  inset:0 !important;
+  z-index:5 !important;
+  pointer-events:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+  overflow:hidden !important;
+}
+.frame-art{
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:fill !important;
+  display:block !important;
+}
+.camera-message{
+  left:32.9375% !important;
+  top:6.2734% !important;
+  right:auto !important;
+  bottom:auto !important;
+  width:61.6875% !important;
+  height:48.9700% !important;
+  z-index:7 !important;
+  background:rgba(85,55,47,.58) !important;
+  color:#fffaf6 !important;
+}
+.countdown{z-index:8 !important;}
+.photo-booth.capture-mode #cameraVideo{display:none !important;}
+.photo-booth.capture-mode #capturedPhoto{display:block !important;}
+.photo-booth.capture-mode .camera-overlay{display:block !important;}
+.photo-preview-actions.show{display:flex !important;}
