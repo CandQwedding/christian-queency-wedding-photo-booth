@@ -22,9 +22,10 @@ const LIVE_H = 523;
 
 // Three bottom photo slots in the updated wedding frame.
 const SHOT_SLOTS = [
-  { x: 506, y: 642, w: 283, h: 306 },
-  { x: 816, y: 642, w: 283, h: 306 },
-  { x: 1126, y: 642, w: 283, h: 306 }
+  // Draw inside the frame's existing borders; do not paint a second border.
+  { x: 506, y: 636, w: 279, h: 308 },
+  { x: 811, y: 636, w: 279, h: 308 },
+  { x: 1116, y: 636, w: 279, h: 308 }
 ];
 
 const video = document.getElementById('cameraVideo');
@@ -243,24 +244,19 @@ async function makeFinalImage() {
   }
   ctx.restore();
 
-  // Draw the wedding frame first so its floral border/text stays on top.
+  // Draw the clean wedding frame first. The supplied frame has transparent
+  // camera opening and empty bottom photo boxes, so no old photo can show through.
   const frameImg = await loadFrameImage();
   if (!frameImg || !frameImg.naturalWidth) {
     throw new Error('Wedding frame could not be loaded.');
   }
   ctx.drawImage(frameImg, 0, 0, FRAME_W, FRAME_H);
 
-  // Put the three captured shots into the three new bottom slots.
+  // Fill only the interiors of the three existing bottom boxes. Their original
+  // borders stay untouched, avoiding the doubled/blurred border problem.
   for (let i = 0; i < shotImages.length; i++) {
     const img = await loadDataImage(shotImages[i]);
     drawCoverImage(ctx, img, SHOT_SLOTS[i]);
-  }
-
-  // Repaint the thin slot borders above the photos.
-  ctx.strokeStyle = '#d7a491';
-  ctx.lineWidth = 6;
-  for (const slot of SHOT_SLOTS) {
-    ctx.strokeRect(slot.x, slot.y, slot.w, slot.h);
   }
 
   capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.94));
