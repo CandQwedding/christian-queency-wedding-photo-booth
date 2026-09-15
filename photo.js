@@ -9,7 +9,7 @@
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdI7YGhVzL4_ljSNDTAGLGvpK7Q3nLPBZoCAwXFMTWV1EewQB2iycxKA6QfQdDXaHM/exec';
 const WEDDING_EMAIL = 'queencypineda29@gmail.com';
 const HASHTAG = '#CenFounfHisQueenCy';
-const FRAME_SRC = 'assets/wedding-frame-live.png?v=20260915b';
+const FRAME_SRC = 'assets/wedding-frame-live.png?v=20260915c';
 const FRAME_W = 1600;
 const FRAME_H = 1068;
 // Exact live-camera opening from the supplied wedding-card reference.
@@ -53,8 +53,8 @@ function stopCamera() {
 async function startCamera() {
   stopCamera();
   setStatus('Starting camera…');
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    setStatus('Camera is unavailable here. Open the photo booth from HTTPS (GitHub Pages) or localhost, not a file:// page.', 'error');
+  if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    setStatus('Camera needs HTTPS. Open the GitHub Pages photo booth link, not a file:// copy.', 'error');
     message.classList.remove('hidden');
     return;
   }
@@ -69,6 +69,7 @@ async function startCamera() {
     });
     video.srcObject = stream;
     video.muted = true;
+    video.classList.toggle('environment', facingMode === 'environment');
     video.style.visibility = 'visible';
     await video.play();
     message.classList.add('hidden');
@@ -79,10 +80,14 @@ async function startCamera() {
   } catch (err) {
     console.error('Camera error:', err);
     const msg = err && err.name === 'NotAllowedError'
-      ? 'Camera permission was blocked. Allow camera access in Chrome, then tap Start camera again.'
+      ? 'Chrome blocked camera access. Click the camera icon beside the address bar, allow Camera, then tap Start camera.'
       : err && err.name === 'NotFoundError'
         ? 'No camera was found. Connect your laptop/USB camera and try again.'
-        : 'We could not start the camera. Make sure no other app is using it, then try again.';
+        : err && err.name === 'NotReadableError'
+          ? 'The camera is busy in another app. Close Zoom, Teams, Camera, or another browser tab and try again.'
+          : err && err.name === 'SecurityError'
+            ? 'Camera access is blocked by the browser or page security settings.'
+            : `Camera could not start (${err?.name || 'unknown error'}). Try Start camera again.`;
     setStatus(msg, 'error');
     message.classList.remove('hidden');
   }
@@ -261,7 +266,8 @@ startBtn.addEventListener('click', startCamera);
 // normal camera-permission prompt the first time. The button remains available
 // for restart/reconnect.
 window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => startCamera(), 250);
+  // Auto-start on GitHub Pages so guests do not have to find the button first.
+  setTimeout(() => startCamera(), 300);
 });
 switchBtn.addEventListener('click', async () => {
   facingMode = facingMode === 'user' ? 'environment' : 'user';
