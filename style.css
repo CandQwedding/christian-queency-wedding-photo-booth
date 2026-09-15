@@ -812,23 +812,39 @@ main>section:nth-of-type(even)::before{right:-90px;bottom:30px}
  @keyframes qrScan{0%,100%{transform:translateY(0)}50%{transform:translateY(210px)}}
 }
 
-/* Camera: romantic wedding portrait frame */
-.photo-booth{border-color:#c7a486;background:linear-gradient(135deg,#f6ecdf,#e5d1ba);box-shadow:0 24px 70px rgba(74,48,36,.18)}
-.camera-stage{border-radius:4px;box-shadow:inset 0 0 0 2px rgba(255,245,232,.55),0 12px 30px rgba(47,29,21,.16)}
-.camera-overlay{border:12px solid rgba(255,245,232,.94)!important;box-shadow:inset 0 0 0 2px rgba(201,168,134,.9),inset 0 0 0 10px rgba(255,255,255,.14),inset 0 0 70px rgba(74,48,36,.16)!important}
-.camera-overlay:before{inset:12px!important;border:1px solid rgba(201,168,134,.95)!important;border-radius:10px}
-.camera-overlay:after{content:'❦';position:absolute;left:50%;top:8px;transform:translateX(-50%);color:#e5cdb1;font:32px/1 'Great Vibes',cursive;text-shadow:0 2px 8px rgba(47,29,21,.35)}
-.couple-badge{position:absolute;left:30px;top:30px;width:clamp(58px,8vw,86px);height:clamp(58px,8vw,86px);padding:4px;background:#fff5e8;border:2px solid #c9a886;border-radius:50%;box-shadow:0 5px 18px rgba(47,29,21,.28),0 0 0 4px rgba(255,245,232,.65);overflow:visible}
-.couple-badge img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
-.couple-badge span{position:absolute;right:-8px;bottom:-5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#fff5e8;color:#9b735a;border:1px solid #c9a886;font-size:14px;box-shadow:0 2px 8px rgba(47,29,21,.2)}
-.overlay-top{top:29px!important;padding:0 125px!important;font-family:'Great Vibes',cursive!important;font-size:clamp(24px,3.6vw,38px)!important;letter-spacing:0!important}
-.overlay-bottom{bottom:25px!important;padding:0 20px}
-.overlay-hashtag{font-size:clamp(10px,1.8vw,14px)!important;letter-spacing:1.8px!important}
-.overlay-date{font-size:10px!important;letter-spacing:3px!important}
-.corner{width:55px!important;height:55px!important;border-color:#d8b99a!important}
+
+/* Wedding photo booth frame — coordinated with the invitation: ivory, blush, peach and champagne */
+.photo-page{background:radial-gradient(circle at 50% 0%,#fffdf9 0%,#f8eee8 48%,#f2ddd4 100%);color:#76564c}
+.photo-nav{background:rgba(255,250,246,.88);border-bottom:1px solid rgba(180,128,112,.20)}
+.photo-brand,.photo-nav a{color:#76564c}
+.photo-brand span{color:#c58f82}
+.photo-heading .eyebrow{color:#b37a6e}
+.photo-heading h1{color:#76564c}
+.photo-heading .script{color:#b37f72}
+.photo-booth{border:1px solid #d4ad9d;padding:12px;background:linear-gradient(135deg,#fffaf6,#f5e5df);box-shadow:0 24px 70px rgba(126,84,71,.16)}
+.camera-stage{background:#caa39a;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(255,250,246,.8),0 12px 30px rgba(126,84,71,.15)}
+#cameraVideo,#capturedPhoto{object-fit:cover}
+.camera-overlay{position:absolute;inset:0;pointer-events:none;border:0!important;box-shadow:none!important;overflow:hidden}
+.camera-overlay:before{content:"";position:absolute;inset:0;border:0!important;box-shadow:inset 0 0 0 10px rgba(255,250,246,.88),inset 0 0 0 12px rgba(203,161,143,.95),inset 0 0 0 18px rgba(255,250,246,.55);border-radius:2px;z-index:2}
+.frame-art{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;z-index:1}
+.overlay-top,.overlay-bottom{z-index:3;position:absolute;left:0;right:0;text-align:center;text-shadow:0 2px 8px rgba(91,58,49,.35)}
+.overlay-top{top:27px;padding:0 100px;color:#fffaf6;font:500 clamp(22px,3.4vw,36px) "Great Vibes",cursive;letter-spacing:0}
+.overlay-top span{font:400 .72em "Great Vibes",cursive;color:#f3d6cb}
+.overlay-bottom{bottom:23px;color:#fffaf6}
+.overlay-hashtag{font:600 clamp(9px,1.7vw,13px) "DM Sans",sans-serif;letter-spacing:1.7px}
+.overlay-date{font:600 9px "DM Sans",sans-serif;letter-spacing:3px;margin-top:5px;opacity:.95;color:#f7e8df}
+.camera-message{background:rgba(103,72,63,.70);color:#fffaf6}
+.photo-button{border-color:#b77f72;color:#76564c}
+.photo-button:hover{background:#b77f72;color:#fffaf6}
+.photo-button.primary{background:#b77f72;color:#fffaf6}
+.photo-button.primary:hover{background:#99675d}
+.photo-note,.photo-status{color:#8b675c}
+.photo-footer{color:#b07a6e}
 @media(max-width:700px){
- .camera-overlay{border-width:8px!important}.camera-overlay:before{inset:8px!important}.camera-overlay:after{top:4px;font-size:24px}
- .couple-badge{left:18px;top:18px;width:54px;height:54px}.couple-badge span{width:18px;height:18px;font-size:11px;right:-6px;bottom:-4px}
- .overlay-top{top:19px!important;padding:0 78px!important;font-size:24px!important}
- .corner{width:34px!important;height:34px!important}
+ .photo-booth{padding:7px}
+ .camera-overlay:before{inset:0;box-shadow:inset 0 0 0 7px rgba(255,250,246,.9),inset 0 0 0 9px rgba(203,161,143,.95),inset 0 0 0 14px rgba(255,250,246,.55)}
+ .overlay-top{top:18px;padding:0 65px;font-size:24px}
+ .overlay-bottom{bottom:17px}
+ .overlay-hashtag{font-size:9px;letter-spacing:1.25px}
+ .overlay-date{font-size:8px;letter-spacing:2.4px}
 }

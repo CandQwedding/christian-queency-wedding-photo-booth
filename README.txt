@@ -71,3 +71,8 @@ IMPORTANT
 - Guests do not need Google accounts and do not need Google Drive.
 - Camera permission is requested by the phone browser.
 - The QR code is generated from the live website URL, so it works after the site is published without hard-coding a domain.
+
+FRAME UPDATE 2026-09-15
+- Replaced the photo booth frame with an ivory/blush/peach/champagne floral frame coordinated with the wedding invitation.
+- The same frame artwork is used in the live camera preview and baked into captured JPG photos.
+- Captured photos continue to upload to the configured Google Drive wedding album through the Apps Script backend.

@@ -114,68 +114,37 @@ async function makeFinalImage() {
     ctx.drawImage(video, 0, 0, vw, vh);
   }
 
-  // Warm translucent wedding treatment matching the invitation.
-  ctx.fillStyle = 'rgba(47,29,21,0.08)';
+  // Soft blush/peach treatment coordinated with the wedding invitation.
+  ctx.fillStyle = 'rgba(247,228,220,0.10)';
   ctx.fillRect(0,0,vw,vh);
 
-  const border = Math.max(18, Math.round(vw * 0.018));
-  // Elegant double wedding frame with rounded inner corners and ornamental flourishes.
-  const outer = border * 0.55;
-  const inner = border * 1.35;
-  ctx.save();
-  ctx.strokeStyle = '#fff5e8';
-  ctx.lineWidth = Math.max(8, Math.round(vw * 0.010));
-  roundedRect(ctx, outer, outer, vw - outer*2, vh - outer*2, Math.max(18, vw*0.025));
-  ctx.stroke();
-  ctx.strokeStyle = 'rgba(74,48,36,.82)';
-  ctx.lineWidth = Math.max(2, Math.round(vw * 0.0022));
-  roundedRect(ctx, inner, inner, vw - inner*2, vh - inner*2, Math.max(12, vw*0.018));
-  ctx.stroke();
-
-  const drawFlourish = (x, y, sx, sy) => {
-    ctx.save(); ctx.translate(x,y); ctx.scale(sx,sy);
-    ctx.strokeStyle = '#e5cdb1'; ctx.lineWidth = Math.max(2, vw*0.002);
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.bezierCurveTo(vw*.018,-vw*.018,vw*.035,vw*.018,vw*.055,0); ctx.bezierCurveTo(vw*.075,-vw*.020,vw*.090,vw*.020,vw*.105,0); ctx.stroke();
-    ctx.fillStyle = '#e5cdb1';
-    [[.03,-.012],[.072,-.014]].forEach(([dx,dy])=>{ctx.beginPath();ctx.ellipse(vw*dx,vw*dy,vw*.009,vw*.005,Math.PI/4,0,Math.PI*2);ctx.fill();});
-    ctx.beginPath();ctx.arc(vw*.052,0,vw*.009,0,Math.PI*2);ctx.fill();
-    ctx.restore();
-  };
-  drawFlourish(inner*1.25, inner*1.55, 1, 1);
-  drawFlourish(vw-inner*1.25, inner*1.55, -1, 1);
-  drawFlourish(inner*1.25, vh-inner*1.55, 1, -1);
-  drawFlourish(vw-inner*1.25, vh-inner*1.55, -1, -1);
-  ctx.restore();
+  // Use the same transparent floral frame artwork shown in the live camera preview.
+  const frameImg = new Image();
+  frameImg.src = 'assets/wedding-frame.svg';
+  try { await frameImg.decode(); } catch (_) {}
+  if (frameImg.complete && frameImg.naturalWidth) {
+    ctx.drawImage(frameImg, 0, 0, vw, vh);
+  }
 
   const pad = Math.max(24, vw * 0.035);
   ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(91,58,49,.35)';
+  ctx.shadowBlur = Math.max(3, vw * 0.004);
 
-  // Small couple portrait badge inside the wedding frame.
-  const badgeSize = Math.max(74, Math.round(vw * 0.095));
-  const badgeX = pad + badgeSize * 0.55;
-  const badgeY = pad + badgeSize * 0.72;
-  const drawBadge = () => {
-    ctx.save();
-    ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeSize/2 + 7, 0, Math.PI*2); ctx.fillStyle='#fff5e8'; ctx.fill();
-    ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeSize/2 + 3, 0, Math.PI*2); ctx.strokeStyle='#c9a886'; ctx.lineWidth=Math.max(2,vw*.002); ctx.stroke();
-    ctx.beginPath(); ctx.arc(badgeX, badgeY, badgeSize/2, 0, Math.PI*2); ctx.clip();
-    ctx.drawImage(coupleImg, badgeX-badgeSize/2, badgeY-badgeSize/2, badgeSize, badgeSize);
-    ctx.restore();
-  };
-  ctx.shadowColor = 'rgba(47,29,21,.6)';
-  ctx.shadowBlur = Math.max(5, vw * 0.008);
-  if (coupleImg.complete && coupleImg.naturalWidth) drawBadge();
-  ctx.fillStyle = '#fff5e8';
+  // Typography follows the website invitation: romantic script with a restrained blush/champagne palette.
+  ctx.fillStyle = '#fffaf6';
+  ctx.font = `500 ${Math.max(24, vw*0.034)}px "Great Vibes", cursive`;
+  ctx.fillText('Christian & Queency', vw/2, pad + Math.max(32, vw*0.045));
 
-  ctx.font = `600 ${Math.max(28, vw*0.035)}px "Cormorant Garamond", Georgia, serif`;
-  ctx.fillText('Christian & Queency', vw/2, pad + Math.max(34, vw*0.045));
+  ctx.font = `600 ${Math.max(10, vw*0.012)}px "DM Sans", Arial, sans-serif`;
+  ctx.letterSpacing = '1.7px';
+  ctx.fillStyle = '#fffaf6';
+  ctx.fillText(HASHTAG, vw/2, vh - pad - Math.max(30, vw*0.022));
 
-  ctx.font = `600 ${Math.max(15, vw*0.018)}px "DM Sans", Arial, sans-serif`;
-  ctx.letterSpacing = '2px';
-  ctx.fillText(HASHTAG, vw/2, vh - pad - Math.max(34, vw*0.025));
-
-  ctx.font = `500 ${Math.max(12, vw*0.013)}px "DM Sans", Arial, sans-serif`;
-  ctx.fillText('10 · 10 · 2026', vw/2, vh - pad - Math.max(12, vw*0.008));
+  ctx.font = `600 ${Math.max(9, vw*0.009)}px "DM Sans", Arial, sans-serif`;
+  ctx.letterSpacing = '3px';
+  ctx.fillStyle = '#f7e8df';
+  ctx.fillText('10 · 10 · 2026', vw/2, vh - pad - Math.max(11, vw*0.008));
   ctx.shadowBlur = 0;
 
   return new Promise(resolve => canvas.toBlob(blob => {
