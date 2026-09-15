@@ -3,7 +3,7 @@
 
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdI7YGhVzL4_ljSNDTAGLGvpK7Q3nLPBZoCAwXFMTWV1EewQB2iycxKA6QfQdDXaHM/exec';
 const WEDDING_EMAIL = 'queencypineda29@gmail.com';
-const HASHTAG = '#CenFoundHisQueency';
+const HASHTAG = '#CenFoundHisQueenCy';
 const FRAME_W = 1600;
 const FRAME_H = 1068;
 const SHOT_COUNT = 3;
@@ -11,7 +11,7 @@ const SHOT_COUNT = 3;
 const FRAME_OPTIONS = {
   classic: {
     name: 'Classic Collage',
-    src: 'assets/frame-1.png?v=20260916d',
+    src: 'assets/frame-1.png?v=20260916e',
     slots: [
       {x:500,y:105,w:980,h:460},
       {x:500,y:615,w:455,h:300},
