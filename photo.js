@@ -3,7 +3,7 @@
 
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdI7YGhVzL4_ljSNDTAGLGvpK7Q3nLPBZoCAwXFMTWV1EewQB2iycxKA6QfQdDXaHM/exec';
 const WEDDING_EMAIL = 'queencypineda29@gmail.com';
-const HASHTAG = '#CenFoundHisQueency';
+const HASHTAG = '#CenFoundHisQueenCy';
 const FRAME_W = 1600;
 const FRAME_H = 1068;
 const SHOT_COUNT = 3;
@@ -11,7 +11,7 @@ const SHOT_COUNT = 3;
 const FRAME_OPTIONS = {
   classic: {
     name: 'Classic Collage',
-    src: 'assets/frame-1.png?v=20260916e',
+    src: 'assets/frame-1.png?v=20260916f',
     slots: [
       {x:500,y:105,w:980,h:460},
       {x:500,y:615,w:455,h:300},
@@ -20,7 +20,7 @@ const FRAME_OPTIONS = {
   },
   strip: {
     name: 'Photo Strip',
-    src: 'assets/frame-2.png?v=20260916d',
+    src: 'assets/frame-2.png?v=20260916f',
     slots: [
       {x:110,y:105,w:700,h:250},
       {x:110,y:385,w:700,h:250},
@@ -29,7 +29,7 @@ const FRAME_OPTIONS = {
   },
   elegant: {
     name: 'Elegant Trio',
-    src: 'assets/frame-3.png?v=20260916d',
+    src: 'assets/frame-3.png?v=20260916f',
     slots: [
       {x:120,y:760,w:420,h:190},
       {x:590,y:760,w:420,h:190},
@@ -231,13 +231,16 @@ async function makeFinalImage() {
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
 
   const frameImg = await loadImage(`${currentFrame().src}&final=${Date.now()}`);
-  ctx.drawImage(frameImg, 0, 0, FRAME_W, FRAME_H);
 
+  // Put the three guest photos into their slots first, then place the frame artwork
+  // on top. This keeps every border, flower, and text crisp and prevents photos
+  // from covering or duplicating frame text.
   const slots = currentFrame().slots;
   for (let i = 0; i < SHOT_COUNT; i++) {
     const img = await loadImage(shotImages[i]);
     drawCoverImage(ctx, img, slots[i]);
   }
+  ctx.drawImage(frameImg, 0, 0, FRAME_W, FRAME_H);
 
   capturedBlob = await new Promise(resolve =>
     canvas.toBlob(resolve, 'image/jpeg', 0.94)
