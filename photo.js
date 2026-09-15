@@ -22,11 +22,14 @@ const LIVE_H = 523;
 
 // Three bottom photo slots in the updated wedding frame.
 const SHOT_SLOTS = [
-  // Draw inside the frame's existing borders; do not paint a second border.
-  { x: 506, y: 636, w: 279, h: 308 },
-  { x: 811, y: 636, w: 279, h: 308 },
-  { x: 1116, y: 636, w: 279, h: 308 }
+  // Exact interiors of the three existing bottom photo boxes.
+  { x: 476, y: 600, w: 262, h: 308 },
+  { x: 762, y: 600, w: 262, h: 308 },
+  { x: 1049, y: 600, w: 262, h: 308 }
 ];
+
+// The supplied couple photo is the permanent large photo in the finished frame.
+const COUPLE_PHOTO_SRC = 'assets/couple-photo.png?v=20260916b';
 
 const video = document.getElementById('cameraVideo');
 const captured = document.getElementById('capturedPhoto');
@@ -222,30 +225,12 @@ async function makeFinalImage() {
   ctx.fillStyle = '#fffdf9';
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
 
-  // Main third-person photo area uses the same crop as the live preview.
-  const vw = video.videoWidth || 1280;
-  const vh = video.videoHeight || 720;
-  const scale = Math.max(LIVE_W / vw, LIVE_H / vh);
-  const dw = vw * scale;
-  const dh = vh * scale;
-  const dx = LIVE_X + (LIVE_W - dw) / 2;
-  const dy = LIVE_Y + (LIVE_H - dh) / 2;
+  // Use the supplied groom-and-bride photo in the large main photo opening.
+  const coupleImg = await loadDataImage(COUPLE_PHOTO_SRC);
+  drawCoverImage(ctx, coupleImg, {x: LIVE_X, y: LIVE_Y, w: LIVE_W, h: LIVE_H});
 
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(LIVE_X, LIVE_Y, LIVE_W, LIVE_H);
-  ctx.clip();
-  if (facingMode === 'user') {
-    ctx.translate(FRAME_W, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, FRAME_W - dx - dw, dy, dw, dh);
-  } else {
-    ctx.drawImage(video, dx, dy, dw, dh);
-  }
-  ctx.restore();
-
-  // Draw the clean wedding frame first. The supplied frame has transparent
-  // camera opening and empty bottom photo boxes, so no old photo can show through.
+  // Draw the clean wedding frame on top. The frame has a transparent main opening
+  // and transparent interiors for the three bottom slots, so no old photo can show through.
   const frameImg = await loadFrameImage();
   if (!frameImg || !frameImg.naturalWidth) {
     throw new Error('Wedding frame could not be loaded.');
