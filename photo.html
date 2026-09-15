@@ -1,60 +1,48 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#d9a89a">
-<meta name="description" content="Christian & Queency wedding guest photo booth.">
-<title>Wedding Photo Booth | Christian & Queency</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#d9b4a8">
+<title>Christian & Queency | Wedding Photo Booth</title>
 <link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link crossorigin href="https://fonts.googleapis.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
-<link href="style.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.photo-page{background:linear-gradient(135deg,#f8eee8,#fffaf7 55%,#f3ddd5);min-height:100vh;color:#704d40}
+.photo-shell{width:min(100%,1700px);margin:0 auto;padding:28px 18px 44px}
+.photo-heading{text-align:center;margin-bottom:22px}.photo-heading h1{margin:4px 0;font-family:'Cormorant Garamond',serif;font-size:clamp(30px,4vw,52px);font-weight:500}.photo-heading em{color:#c28671}.photo-heading p{margin:5px 0;color:#8e6658}.photo-heading .script{font:36px 'Great Vibes',cursive;color:#c28671}
+.photo-booth{width:min(100%,1200px);margin:auto;background:#fffdf8;padding:0;border:1px solid #d9ad9a;box-shadow:0 24px 70px rgba(126,84,71,.18);overflow:hidden}
+.camera-stage{position:relative;width:100%;aspect-ratio:1600/1068;background:#ead8cf;overflow:hidden}
+#cameraVideo{position:absolute;left:33.3125%;top:6.9288%;width:60.875%;height:51.1236%;display:block;object-fit:cover;z-index:2;transform:scaleX(-1);background:#d8b3a6}
+#capturedPhoto{position:absolute;inset:0;width:100%;height:100%;display:none;object-fit:contain;z-index:5;background:#fffdf8}
+.camera-overlay{position:absolute;inset:0;z-index:4;pointer-events:none}
+.frame-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;display:block}
+.camera-message{position:absolute;left:33.3125%;top:6.9288%;width:60.875%;height:51.1236%;z-index:7;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;box-sizing:border-box;color:#fff;background:rgba(90,61,51,.72);backdrop-filter:blur(2px)}
+.camera-message.hidden{display:none}.camera-message strong{display:block;font:600 30px 'Cormorant Garamond',serif}.camera-message span{display:block;font:13px 'DM Sans',sans-serif;margin-top:6px}
+.countdown{position:absolute;left:50%;top:31%;transform:translate(-50%,-50%) scale(.6);opacity:0;z-index:9;color:white;font:700 120px 'Cormorant Garamond',serif;text-shadow:0 4px 20px rgba(0,0,0,.35);pointer-events:none}.countdown.show{animation:count .9s ease forwards}@keyframes count{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.12)}}
+.photo-controls,.photo-preview-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:16px;background:#fffdf8}.photo-preview-actions{display:none}.photo-preview-actions.show{display:flex}.photo-button{border:1px solid #cfa18f;background:#fff7f2;color:#704d40;padding:12px 18px;border-radius:999px;cursor:pointer;font:600 14px 'DM Sans',sans-serif}.photo-button.primary{background:#a96f5b;color:#fff;border-color:#a96f5b}.photo-button:disabled{opacity:.45;cursor:not-allowed}.photo-status{text-align:center;min-height:22px;margin:0;padding:0 18px 12px;font:500 14px 'DM Sans',sans-serif}.photo-status.error{color:#a33d32}.photo-status.success{color:#3f7651}.photo-note{text-align:center;padding:0 18px 22px;margin:0;color:#97776b;font:12px 'DM Sans',sans-serif}.photo-footer{text-align:center;padding:20px;color:#9a7162;font:14px 'DM Sans',sans-serif}.photo-page .photo-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 22px}.photo-page .photo-nav a{color:#704d40;text-decoration:none}.photo-brand{font-family:'Cormorant Garamond',serif;font-size:25px}
+.photo-booth.capture-mode #cameraVideo,.photo-booth.capture-mode .camera-message{display:none}.photo-booth.capture-mode #capturedPhoto{display:block}.photo-booth.capture-mode .photo-controls{display:none}
+@media(max-width:700px){.photo-shell{padding:12px 8px 30px}.photo-booth{width:100%}.photo-heading .script{font-size:30px}.photo-page .photo-nav{padding:12px 14px}.photo-button{padding:11px 14px;font-size:13px}}
+</style>
 </head>
 <body class="photo-page">
-<header class="photo-nav">
-<a class="photo-brand" href="https://candqwedding.github.io/christian-queency-wedding">C <span>&amp;</span> Q</a>
-<a href="https://candqwedding.github.io/christian-queency-wedding">Back to invitation ↗</a>
-</header>
-
+<header class="photo-nav"><a class="photo-brand" href="https://candqwedding.github.io/christian-queency-wedding">C <span>&amp;</span> Q</a><a href="https://candqwedding.github.io/christian-queency-wedding">Back to invitation ↗</a></header>
 <main class="photo-shell">
-<section class="photo-heading">
-<p class="eyebrow">A little memory from our day</p>
-<h1>Share a photo <em>with us</em></h1>
-<p class="script">Christian &amp; Queency</p>
-<p>Take a photo, add our wedding frame, then submit it to our shared wedding album.</p>
-</section>
-
+<section class="photo-heading"><p class="eyebrow">A little memory from our day</p><h1>Share a photo <em>with us</em></h1><p class="script">Christian &amp; Queency</p><p>Take a photo with our wedding frame and share the memory with us.</p></section>
 <section class="photo-booth" id="photoBooth">
 <div class="camera-stage" id="cameraStage">
 <video id="cameraVideo" autoplay playsinline muted></video>
-<img id="capturedPhoto" alt="Your captured wedding photo preview">
-<div class="camera-overlay" aria-hidden="true">
-<img class="frame-art" src="assets/wedding-frame-transparent.png" alt="">
-</div>
-<div class="camera-message" id="cameraMessage">
-<div><strong>Camera is ready</strong><span>Tap “Start camera” and allow camera access.</span></div>
-</div>
+<img id="capturedPhoto" alt="Your finished wedding photo">
+<div class="camera-overlay" aria-hidden="true"><img class="frame-art" src="assets/wedding-frame.png" alt=""></div>
+<div class="camera-message" id="cameraMessage"><div><strong>Camera is ready</strong><span>Press Start camera and allow camera access.</span></div></div>
 <div class="countdown" id="countdown" aria-live="polite"></div>
 </div>
-
-<div class="photo-controls">
-<button class="photo-button" id="startCamera" type="button">Start camera</button>
-<button class="photo-button" id="switchCamera" type="button" disabled>Switch camera</button>
-<button class="photo-button primary" id="captureButton" type="button" disabled>Take photo</button>
-</div>
-
-<div class="photo-preview-actions" id="previewActions">
-<button class="photo-button" id="redoButton" type="button">↻ Redo</button>
-<button class="photo-button primary" id="submitButton" type="button">✓ Submit photo</button>
-</div>
-
-<p class="photo-status" id="photoStatus" role="status" aria-live="polite"></p>
-<p class="photo-note">Please keep this page open while your photo uploads. The finished photo will be saved to the couple’s Google Drive wedding album.</p>
+<div class="photo-controls"><button class="photo-button primary" id="startCamera" type="button">Start camera</button><button class="photo-button" id="switchCamera" type="button" disabled>Switch camera</button><button class="photo-button primary" id="captureButton" type="button" disabled>Take photo</button></div>
+<div class="photo-preview-actions" id="previewActions"><button class="photo-button" id="redoButton" type="button">↻ Redo</button><button class="photo-button primary" id="downloadButton" type="button">↓ Download photo</button><button class="photo-button primary" id="submitButton" type="button">✓ Submit photo</button></div>
+<p class="photo-status" id="photoStatus" role="status" aria-live="polite"></p><p class="photo-note">Your finished photo is saved in the wedding album after you submit it.</p>
 </section>
-</main>
-<footer class="photo-footer">With love · Christian &amp; Queency · #CenFounfHisQueenCy</footer>
-
+</main><footer class="photo-footer">With love · Christian &amp; Queency · #CenFounfHisQueenCy</footer>
 <script src="photo.js"></script>
-</body>
-</html>
+</body></html>
