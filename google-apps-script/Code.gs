@@ -47,7 +47,7 @@ function doPost(e) {
     const file = folder.createFile(blob);
     file.setDescription(
       'Christian & Queency Wedding Photo Booth\n' +
-      (data.hashtag || '#ChristianCenFoundhisQueenCy')
+      (data.hashtag || '#CenFoundHisQueency')
     );
 
     return ContentService

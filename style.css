@@ -20,3 +20,6 @@ body{font-family:"DM Sans",sans-serif;background:radial-gradient(circle at 50% 0
 .photo-status{min-height:18px;text-align:center;margin:13px 0 0;font-size:11px;color:#76554b}.photo-status.error{color:#a34f43}.photo-status.success{color:#66805f}.photo-note{text-align:center;font-size:10px;line-height:1.55;color:#8a655b;max-width:600px;margin:10px auto 0}.photo-footer{text-align:center;padding:18px;font-size:10px;letter-spacing:.08em;color:#a9786d}
 .photo-booth.capture-mode #cameraVideo{display:none}.photo-booth.capture-mode #capturedPhoto{display:block}.photo-booth.capture-mode .camera-message{display:none}
 @media(max-width:700px){.photo-nav{padding:0 15px}.photo-nav a:last-child{font-size:9px}.photo-shell{width:min(100% - 14px,980px);padding-top:24px}.photo-heading{margin-bottom:16px}.photo-heading h1{font-size:44px}.photo-heading .script{font-size:34px}.photo-heading>p:last-child{font-size:10px}.photo-booth{padding:7px 7px 14px}.photo-button{padding:0 12px;font-size:9px}.camera-message strong{font-size:20px}.camera-message span{font-size:8px}.countdown{font-size:72px}}
+/* 3-shot wedding booth */
+#captureButton{min-width:150px}
+.photo-booth.capture-mode .photo-controls{opacity:.9}
