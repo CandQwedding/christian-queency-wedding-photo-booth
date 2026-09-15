@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4a3024">
+<meta name="description" content="Christian & Queency wedding guest photo booth.">
+<title>Wedding Photo Booth | Christian & Queency</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+</head>
+<body class="photo-page">
+<header class="photo-nav">
+<a class="photo-brand" href="index.html">C <span>&amp;</span> Q</a>
+<a href="index.html">Back to invitation ↗</a>
+</header>
+
+<main class="photo-shell">
+<section class="photo-heading">
+<p class="eyebrow">A little memory from our day</p>
+<h1>Share a photo <em>with us</em></h1>
+<p class="script">Christian &amp; Queency</p>
+<p>Take a photo, add our wedding frame, then submit it to our shared wedding album.</p>
+</section>
+
+<section class="photo-booth" id="photoBooth">
+<div class="camera-stage" id="cameraStage">
+<video id="cameraVideo" autoplay playsinline muted></video>
+<img id="capturedPhoto" alt="Your captured wedding photo preview">
+<div class="camera-overlay" aria-hidden="true">
+<div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+<div class="overlay-top">Christian <span>&amp;</span> Queency</div>
+<div class="overlay-bottom">
+<div class="overlay-hashtag">#ChristianCenFoundhisQueenCy</div>
+<div class="overlay-date">10 · 10 · 2026</div>
+</div>
+</div>
+<div class="camera-message" id="cameraMessage">
+<div><strong>Camera is ready</strong><span>Tap “Start camera” and allow camera access.</span></div>
+</div>
+<div class="countdown" id="countdown" aria-live="polite"></div>
+</div>
+
+<div class="photo-controls">
+<button class="photo-button" id="startCamera" type="button">Start camera</button>
+<button class="photo-button" id="switchCamera" type="button" disabled>Switch camera</button>
+<button class="photo-button primary" id="captureButton" type="button" disabled>Take photo</button>
+</div>
+
+<div class="photo-preview-actions" id="previewActions">
+<button class="photo-button" id="redoButton" type="button">↻ Redo</button>
+<button class="photo-button primary" id="submitButton" type="button">✓ Submit photo</button>
+</div>
+
+<p class="photo-status" id="photoStatus" role="status" aria-live="polite"></p>
+<p class="photo-note">Please keep this page open while your photo uploads. The finished photo will be saved to the couple’s Google Drive wedding album.</p>
+</section>
+</main>
+<footer class="photo-footer">With love · Christian &amp; Queency · #ChristianCenFoundhisQueenCy</footer>
+
+<script src="photo.js"></script>
+</body>
+</html>
