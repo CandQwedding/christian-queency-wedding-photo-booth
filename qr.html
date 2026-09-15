@@ -13,14 +13,49 @@
 </head>
 <body class="qr-page">
 <main class="qr-card">
-<div class="monogram">C <span>&amp;</span> Q</div>
-<p class="eyebrow">Christian &amp; Queency · 10 October 2026</p>
-<h1>Scan &amp; share<br><span class="script">a memory</span></h1>
-<div id="qrcode" aria-label="QR code for the wedding photo booth"></div>
-<p class="qr-instructions">Guests can scan this code with their phone camera. It opens the wedding photo booth where they can take, redo, and submit a framed photo.</p>
-<p class="qr-url" id="qrUrl"></p>
-<a class="button dark" href="photo.html">Open photo booth ↗</a>
+  <div class="qr-floral qr-floral-tl" aria-hidden="true">❧</div>
+  <div class="qr-floral qr-floral-tr" aria-hidden="true">❧</div>
+  <div class="qr-floral qr-floral-bl" aria-hidden="true">❧</div>
+  <div class="qr-floral qr-floral-br" aria-hidden="true">❧</div>
+
+  <div class="qr-top-ornament" aria-hidden="true"><span>✦</span><i></i><span>♡</span><i></i><span>✦</span></div>
+  <p class="qr-kicker">A little gift from our celebration</p>
+  <div class="monogram">C <span>&amp;</span> Q</div>
+  <div class="qr-names">Christian <span>&amp;</span> Queency</div>
+  <p class="qr-date">10 · 10 · 2026</p>
+
+  <div class="qr-divider"><span>❦</span></div>
+
+  <section class="qr-frame" aria-label="Wedding photo booth QR code">
+    <div class="frame-corner frame-tl"></div>
+    <div class="frame-corner frame-tr"></div>
+    <div class="frame-corner frame-bl"></div>
+    <div class="frame-corner frame-br"></div>
+    <div class="qr-glow"></div>
+    <div class="qr-label">Scan our wedding moments</div>
+    <div id="qrcode"></div>
+    <div class="qr-scan-line" aria-hidden="true"></div>
+    <div class="qr-frame-bottom">Point your camera here</div>
+  </section>
+
+  <h1>Scan <span>•</span> Smile <span>•</span> Capture <span>•</span> Share</h1>
+  <p class="qr-instructions">Scan with your phone camera, take a photo, choose your favorite frame, and share the memory with us.</p>
+
+  <div class="qr-steps" aria-label="How to use">
+    <div><b>01</b><span>Scan</span></div>
+    <i>•</i>
+    <div><b>02</b><span>Smile</span></div>
+    <i>•</i>
+    <div><b>03</b><span>Capture</span></div>
+    <i>•</i>
+    <div><b>04</b><span>Share</span></div>
+  </div>
+
+  <p class="qr-url" id="qrUrl"></p>
+  <a class="button dark qr-open" href="photo.html">Open photo booth ↗</a>
+  <div class="qr-bottom-ornament" aria-hidden="true">❦</div>
 </main>
+
 <script>
 const target = new URL('photo.html', window.location.href).href;
 document.getElementById('qrUrl').textContent = target;
@@ -29,7 +64,7 @@ new QRCode(document.getElementById('qrcode'), {
   width: 226,
   height: 226,
   colorDark: '#4a3024',
-  colorLight: '#fff8ee',
+  colorLight: '#fffdf8',
   correctLevel: QRCode.CorrectLevel.H
 });
 </script>

@@ -619,21 +619,195 @@ main>section:nth-of-type(even)::before{right:-90px;bottom:30px}
 .photo-booth.capture-mode #capturedPhoto{display:block}
 .photo-booth.capture-mode .camera-overlay{display:block}
 .photo-footer{text-align:center;padding:10px 20px 35px;color:#8c6650;font-size:10px;letter-spacing:2px;text-transform:uppercase}
-.qr-page{min-height:100svh;background:#f3eadc;color:#4a3024;display:grid;place-items:center;padding:30px}
-.qr-card{width:min(100%,650px);background:#fff8ee;border:1px solid #c7aa8d;padding:38px;text-align:center;box-shadow:0 25px 70px rgba(74,48,36,.14)}
-.qr-card .monogram{font:500 40px "Cormorant Garamond",serif}.qr-card .monogram span{font-family:"Great Vibes",cursive}
-.qr-card h1{font:500 clamp(40px,7vw,64px)/.9 "Cormorant Garamond",serif;margin:12px 0}
-.qr-card .script{color:#69483a;margin:0 0 22px}
-#qrcode{width:250px;height:250px;margin:20px auto;display:grid;place-items:center;background:#fff;padding:12px;border:1px solid #d7c1aa}
+/* Wedding QR display — ornate, elegant, screen-ready */
+.qr-page{
+  min-height:100svh;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,.72), transparent 34%),
+    radial-gradient(circle at 10% 90%, rgba(199,170,141,.20), transparent 32%),
+    #efe2d1;
+  color:#4a3024;
+  display:grid;
+  place-items:center;
+  padding:34px;
+  position:relative;
+  overflow-x:hidden;
+}
+.qr-page:before,
+.qr-page:after{
+  content:"";
+  position:fixed;
+  width:360px;height:360px;
+  border:1px solid rgba(140,102,80,.14);
+  border-radius:50%;
+  pointer-events:none;
+}
+.qr-page:before{top:-250px;left:-180px}
+.qr-page:after{right:-180px;bottom:-250px}
+
+.qr-card{
+  width:min(100%,760px);
+  min-height:calc(100svh - 68px);
+  background:rgba(255,250,242,.96);
+  border:1px solid #c4a384;
+  outline:1px solid rgba(196,163,132,.48);
+  outline-offset:9px;
+  padding:28px 38px 25px;
+  text-align:center;
+  box-shadow:0 30px 90px rgba(74,48,36,.20);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.qr-card:before,
+.qr-card:after{
+  content:"";
+  position:absolute;
+  left:9%;right:9%;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#c4a384,transparent);
+}
+.qr-card:before{top:15px}
+.qr-card:after{bottom:15px}
+
+.qr-floral{
+  position:absolute;
+  font-family:"Great Vibes",cursive;
+  color:#a27b60;
+  font-size:72px;
+  line-height:1;
+  opacity:.68;
+  z-index:0;
+}
+.qr-floral-tl{top:22px;left:27px;transform:rotate(-35deg)}
+.qr-floral-tr{top:22px;right:27px;transform:scaleX(-1) rotate(-35deg)}
+.qr-floral-bl{bottom:22px;left:27px;transform:rotate(145deg)}
+.qr-floral-br{bottom:22px;right:27px;transform:scaleX(-1) rotate(145deg)}
+
+.qr-top-ornament{display:flex;align-items:center;gap:9px;color:#a27b60;font-size:12px;margin-bottom:2px;position:relative;z-index:1}
+.qr-top-ornament i{width:45px;height:1px;background:#cbb09a;display:block}
+.qr-kicker{font-size:9px;letter-spacing:3.5px;text-transform:uppercase;color:#987258;margin:5px 0 4px;position:relative;z-index:1}
+.qr-card .monogram{font:500 34px "Cormorant Garamond",serif;position:relative;z-index:1}
+.qr-card .monogram span{font-family:"Great Vibes",cursive;color:#a27b60}
+.qr-names{font:500 clamp(29px,5vw,43px)/1 "Cormorant Garamond",serif;letter-spacing:.4px}
+.qr-names span{font-family:"Great Vibes",cursive;color:#a27b60;padding:0 4px}
+.qr-date{font:600 10px "DM Sans",sans-serif;letter-spacing:5px;color:#8c6650;margin:7px 0 0}
+.qr-divider{display:flex;align-items:center;gap:13px;width:min(310px,65%);margin:8px auto 12px;color:#a27b60}
+.qr-divider:before,.qr-divider:after{content:"";height:1px;flex:1;background:#d4bca4}
+.qr-divider span{font-size:16px}
+
+.qr-frame{
+  width:min(330px,70vw);
+  aspect-ratio:1;
+  background:#fffdf8;
+  border:1px solid #b89473;
+  padding:31px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  box-shadow:0 12px 35px rgba(74,48,36,.13), inset 0 0 0 7px #f4eadc, inset 0 0 0 8px #cdb092;
+}
+.qr-frame:before{
+  content:"";
+  position:absolute;inset:15px;
+  border:1px solid rgba(162,123,96,.38);
+  pointer-events:none;
+}
+.qr-label,.qr-frame-bottom{
+  position:absolute;left:50%;transform:translateX(-50%);
+  background:#fffdf8;padding:2px 10px;
+  font-size:8px;letter-spacing:2px;text-transform:uppercase;
+  color:#8c6650;white-space:nowrap;z-index:4;
+}
+.qr-label{top:-6px}
+.qr-frame-bottom{bottom:-6px}
+.frame-corner{
+  position:absolute;width:37px;height:37px;z-index:5;
+  border-color:#a27b60;border-style:solid;
+}
+.frame-tl{left:3px;top:3px;border-width:2px 0 0 2px}
+.frame-tr{right:3px;top:3px;border-width:2px 2px 0 0}
+.frame-bl{left:3px;bottom:3px;border-width:0 0 2px 2px}
+.frame-br{right:3px;bottom:3px;border-width:0 2px 2px 0}
+.frame-corner:after{
+  content:"❦";position:absolute;color:#a27b60;font-size:14px;
+}
+.frame-tl:after{left:-7px;top:-10px}
+.frame-tr:after{right:-7px;top:-10px;transform:scaleX(-1)}
+.frame-bl:after{left:-7px;bottom:-10px;transform:rotate(180deg)}
+.frame-br:after{right:-7px;bottom:-10px;transform:scaleX(-1) rotate(180deg)}
+
+#qrcode{
+  width:250px;height:250px;
+  margin:0;
+  display:grid;place-items:center;
+  background:#fff;
+  padding:11px;
+  border:1px solid #ead9c6;
+  position:relative;
+  z-index:2;
+}
 #qrcode img,#qrcode canvas{max-width:100%;height:auto}
-.qr-url{font-size:10px;word-break:break-all;color:#8c6650;margin:12px auto;max-width:500px}
-.qr-instructions{font-size:12px;color:#735749;max-width:430px;margin:18px auto}
-.reception-photo-link{margin:12px 0 6px}
+.qr-glow{
+  position:absolute;inset:22px;
+  border:1px solid rgba(199,170,141,.18);
+  box-shadow:0 0 35px rgba(199,170,141,.24);
+  animation:qrPulse 2.8s ease-in-out infinite;
+  pointer-events:none;
+}
+.qr-scan-line{
+  position:absolute;left:31px;right:31px;top:31px;height:2px;
+  background:linear-gradient(90deg,transparent,#a27b60,transparent);
+  box-shadow:0 0 12px rgba(162,123,96,.55);
+  opacity:.7;z-index:3;animation:qrScan 3.2s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes qrScan{0%,100%{transform:translateY(0);opacity:.15}50%{transform:translateY(245px);opacity:.8}}
+@keyframes qrPulse{50%{transform:scale(1.015);opacity:.72}}
+
+.qr-card h1{
+  font:600 clamp(19px,3vw,26px)/1 "DM Sans",sans-serif;
+  letter-spacing:2px;text-transform:uppercase;
+  margin:18px 0 7px;color:#4a3024;
+}
+.qr-card h1 span{color:#a27b60;padding:0 3px}
+.qr-instructions{
+  font-size:11px;line-height:1.55;color:#735749;
+  max-width:510px;margin:0 auto 10px;
+}
+.qr-steps{
+  display:flex;align-items:center;justify-content:center;
+  gap:11px;margin:2px auto 7px;color:#8c6650;
+}
+.qr-steps div{display:flex;align-items:center;gap:5px}
+.qr-steps b{font:600 9px "DM Sans",sans-serif;letter-spacing:1px}
+.qr-steps span{font-size:9px;letter-spacing:1px;text-transform:uppercase}
+.qr-steps i{font-style:normal;color:#c4a384}
+.qr-url{font-size:8px;word-break:break-all;color:#a27b60;margin:4px auto 8px;max-width:520px;opacity:.65}
+.qr-open{font-size:9px;padding:10px 18px}
+.qr-bottom-ornament{font:24px "Great Vibes",cursive;color:#a27b60;margin-top:4px}
+
 @media(max-width:700px){
  .photo-nav{height:64px;padding:0 18px}.photo-brand{font-size:25px}.photo-nav a{font-size:9px}
  .photo-shell{padding:86px 10px 35px}.photo-heading{margin-bottom:18px}
  .photo-booth{padding:7px}.camera-overlay{border-width:9px}.camera-overlay:before{inset:7px}
  .overlay-top{top:17px}.overlay-bottom{bottom:16px}.corner{width:30px;height:30px}.corner.tl{left:14px;top:14px}.corner.tr{right:14px;top:14px}.corner.bl{left:14px;bottom:14px}.corner.br{right:14px;bottom:14px}
  .photo-controls{padding-top:12px}.photo-button{padding:12px 14px}
- .qr-card{padding:28px 18px}.qr-page{padding:14px}
+ .qr-page{padding:18px 12px}
+ .qr-card{min-height:calc(100svh - 36px);padding:25px 16px 20px;outline-offset:5px}
+ .qr-floral{font-size:52px}
+ .qr-floral-tl{left:16px}.qr-floral-tr{right:16px}.qr-floral-bl{left:16px}.qr-floral-br{right:16px}
+ .qr-kicker{letter-spacing:2.5px}
+ .qr-names{font-size:32px}
+ .qr-frame{width:min(310px,78vw);padding:27px}
+ #qrcode{width:228px;height:228px;padding:9px}
+ .qr-card h1{font-size:17px;letter-spacing:1.5px;margin-top:15px}
+ .qr-instructions{font-size:10px;max-width:360px}
+ .qr-steps{gap:6px}
+ .qr-steps span{font-size:8px}
+ .qr-steps i{font-size:8px}
+ @keyframes qrScan{0%,100%{transform:translateY(0)}50%{transform:translateY(210px)}}
 }
