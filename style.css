@@ -811,3 +811,24 @@ main>section:nth-of-type(even)::before{right:-90px;bottom:30px}
  .qr-steps i{font-size:8px}
  @keyframes qrScan{0%,100%{transform:translateY(0)}50%{transform:translateY(210px)}}
 }
+
+/* Camera: romantic wedding portrait frame */
+.photo-booth{border-color:#c7a486;background:linear-gradient(135deg,#f6ecdf,#e5d1ba);box-shadow:0 24px 70px rgba(74,48,36,.18)}
+.camera-stage{border-radius:4px;box-shadow:inset 0 0 0 2px rgba(255,245,232,.55),0 12px 30px rgba(47,29,21,.16)}
+.camera-overlay{border:12px solid rgba(255,245,232,.94)!important;box-shadow:inset 0 0 0 2px rgba(201,168,134,.9),inset 0 0 0 10px rgba(255,255,255,.14),inset 0 0 70px rgba(74,48,36,.16)!important}
+.camera-overlay:before{inset:12px!important;border:1px solid rgba(201,168,134,.95)!important;border-radius:10px}
+.camera-overlay:after{content:'❦';position:absolute;left:50%;top:8px;transform:translateX(-50%);color:#e5cdb1;font:32px/1 'Great Vibes',cursive;text-shadow:0 2px 8px rgba(47,29,21,.35)}
+.couple-badge{position:absolute;left:30px;top:30px;width:clamp(58px,8vw,86px);height:clamp(58px,8vw,86px);padding:4px;background:#fff5e8;border:2px solid #c9a886;border-radius:50%;box-shadow:0 5px 18px rgba(47,29,21,.28),0 0 0 4px rgba(255,245,232,.65);overflow:visible}
+.couple-badge img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.couple-badge span{position:absolute;right:-8px;bottom:-5px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:#fff5e8;color:#9b735a;border:1px solid #c9a886;font-size:14px;box-shadow:0 2px 8px rgba(47,29,21,.2)}
+.overlay-top{top:29px!important;padding:0 125px!important;font-family:'Great Vibes',cursive!important;font-size:clamp(24px,3.6vw,38px)!important;letter-spacing:0!important}
+.overlay-bottom{bottom:25px!important;padding:0 20px}
+.overlay-hashtag{font-size:clamp(10px,1.8vw,14px)!important;letter-spacing:1.8px!important}
+.overlay-date{font-size:10px!important;letter-spacing:3px!important}
+.corner{width:55px!important;height:55px!important;border-color:#d8b99a!important}
+@media(max-width:700px){
+ .camera-overlay{border-width:8px!important}.camera-overlay:before{inset:8px!important}.camera-overlay:after{top:4px;font-size:24px}
+ .couple-badge{left:18px;top:18px;width:54px;height:54px}.couple-badge span{width:18px;height:18px;font-size:11px;right:-6px;bottom:-4px}
+ .overlay-top{top:19px!important;padding:0 78px!important;font-size:24px!important}
+ .corner{width:34px!important;height:34px!important}
+}
