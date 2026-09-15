@@ -848,3 +848,14 @@ main>section:nth-of-type(even)::before{right:-90px;bottom:30px}
  .overlay-hashtag{font-size:9px;letter-spacing:1.25px}
  .overlay-date{font-size:8px;letter-spacing:2.4px}
 }
+
+
+/* FINAL REFERENCE-MATCHED FRAME
+   The supplied wedding reference is a cream photo-card collage with blush/peach flowers.
+   The SVG itself contains the fixed couple photo and typography; the center opening remains live camera. */
+.camera-stage{background:#d9b4a8;border-radius:2px;}
+.camera-overlay{inset:0!important;border:0!important;box-shadow:none!important;overflow:hidden!important;}
+.frame-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:fill!important;z-index:4!important;}
+.camera-message{z-index:8;}
+.countdown{z-index:9;}
+.photo-booth.capture-mode .camera-overlay{display:block;}

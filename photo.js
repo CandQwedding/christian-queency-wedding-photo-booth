@@ -99,10 +99,6 @@ async function makeFinalImage() {
   canvas.width = vw;
   canvas.height = vh;
   const ctx = canvas.getContext('2d');
-  const coupleImg = new Image();
-  coupleImg.src = 'assets/couple-small.webp';
-  try { await coupleImg.decode(); } catch (_) {}
-
   // Mirror only the selfie camera; the rear camera should remain natural.
   if (facingMode === 'user') {
     ctx.save();
@@ -125,27 +121,6 @@ async function makeFinalImage() {
   if (frameImg.complete && frameImg.naturalWidth) {
     ctx.drawImage(frameImg, 0, 0, vw, vh);
   }
-
-  const pad = Math.max(24, vw * 0.035);
-  ctx.textAlign = 'center';
-  ctx.shadowColor = 'rgba(91,58,49,.35)';
-  ctx.shadowBlur = Math.max(3, vw * 0.004);
-
-  // Typography follows the website invitation: romantic script with a restrained blush/champagne palette.
-  ctx.fillStyle = '#fffaf6';
-  ctx.font = `500 ${Math.max(24, vw*0.034)}px "Great Vibes", cursive`;
-  ctx.fillText('Christian & Queency', vw/2, pad + Math.max(32, vw*0.045));
-
-  ctx.font = `600 ${Math.max(10, vw*0.012)}px "DM Sans", Arial, sans-serif`;
-  ctx.letterSpacing = '1.7px';
-  ctx.fillStyle = '#fffaf6';
-  ctx.fillText(HASHTAG, vw/2, vh - pad - Math.max(30, vw*0.022));
-
-  ctx.font = `600 ${Math.max(9, vw*0.009)}px "DM Sans", Arial, sans-serif`;
-  ctx.letterSpacing = '3px';
-  ctx.fillStyle = '#f7e8df';
-  ctx.fillText('10 · 10 · 2026', vw/2, vh - pad - Math.max(11, vw*0.008));
-  ctx.shadowBlur = 0;
 
   return new Promise(resolve => canvas.toBlob(blob => {
     capturedBlob = blob;
