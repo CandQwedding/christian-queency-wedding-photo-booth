@@ -30,20 +30,20 @@ const FRAME_OPTIONS = {
   strip: {
     name: 'Photo Strip',
     src: 'assets/frame-2',
-    slots: [
-      {x:110,y:105,w:700,h:250},
-      {x:110,y:385,w:700,h:250},
-      {x:110,y:665,w:700,h:250}
-    ]
+    slotsByCount: {
+      1: [{x:500,y:145,w:600,h:675}],
+      2: [{x:500,y:115,w:600,h:330},{x:500,y:585,w:600,h:330}],
+      3: [{x:500,y:80,w:600,h:255},{x:500,y:405,w:600,h:255},{x:500,y:730,w:600,h:255}]
+    }
   },
   elegant: {
     name: 'Elegant Trio',
     src: 'assets/frame-3',
-    slots: [
-      {x:120,y:760,w:420,h:190},
-      {x:590,y:760,w:420,h:190},
-      {x:1060,y:760,w:420,h:190}
-    ]
+    slotsByCount: {
+      1: [{x:170,y:115,w:1260,h:720}],
+      2: [{x:120,y:145,w:635,h:690},{x:845,y:145,w:635,h:690}],
+      3: [{x:105,y:145,w:450,h:690},{x:575,y:145,w:450,h:690},{x:1045,y:145,w:450,h:690}]
+    }
   }
 };
 
@@ -98,7 +98,8 @@ function frameCanvasSpec() {
       ]
     };
   }
-  return {w: FRAME_W, h: FRAME_H, slots: currentFrame().slots};
+  const slots = currentFrame().slotsByCount?.[shotCount] || currentFrame().slotsByCount?.[3] || [];
+  return {w: FRAME_W, h: FRAME_H, slots};
 }
 
 function updateFrameImages() {
