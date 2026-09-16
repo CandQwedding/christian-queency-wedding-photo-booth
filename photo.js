@@ -23,26 +23,6 @@ const FRAME_GEOMETRY = {
   // Exact transparent photo-window geometry measured from the supplied frame PNGs.
   // Values are normalized to the selected print canvas so the live camera fills
   // every transparent photo opening instead of sitting inside a smaller box.
-  classic: {
-    1:[179/1800,124/1200,1442/1800,738/1200],
-    2:[179/1800,132/1200,688/1800,707/1200,951/1800,132/1200,670/1800,707/1200],
-    3:[179/1800,135/1200,470/1800,682/1200,724/1800,135/1200,479/1800,682/1200,1279/1800,135/1200,479/1800,682/1200]
-  },
-  strip: {
-    1:[226/1800,252/1200,1362/1800,611/1200],
-    2:[226/1800,255/1200,1362/1800,253/1200,226/1800,546/1200,1362/1800,276/1200],
-    3:[226/1800,233/1200,1362/1800,232/1200,226/1800,493/1200,1362/1800,231/1200,226/1800,753/1200,1362/1800,237/1200]
-  },
-  elegant: {
-    1:[196/1800,141/1200,1385/1800,758/1200],
-    2:[196/1800,154/1200,669/1800,822/1200,920/1800,154/1200,665/1800,822/1200],
-    3:[196/1800,159/1200,437/1800,845/1200,674/1800,159/1200,438/1800,845/1200,1157/1800,159/1200,428/1800,845/1200]
-  },
-  elegant: {
-    1:[196/1800,141/1200,1385/1800,758/1200],
-    2:[196/1800,154/1200,669/1800,822/1200,920/1800,154/1200,665/1800,822/1200],
-    3:[196/1800,159/1200,437/1800,845/1200,674/1800,159/1200,438/1800,845/1200,1157/1800,159/1200,428/1800,845/1200]
-  },
   botanical: {
     1:[180/1800,228/1200,1440/1800,792/1200],
     2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
@@ -73,11 +53,6 @@ const FRAME_GEOMETRY = {
     2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
     3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
   },
-  strip2x6: {
-    1:[75/600,378/1800,454/600,917/1800],
-    2:[75/600,382/1800,454/600,380/1800,75/600,820/1800,454/600,413/1800],
-    3:[75/600,350/1800,454/600,347/1800,75/600,739/1800,454/600,348/1800,75/600,1129/1800,454/600,356/1800]
-  },
   newStrip2x6: {
     1:[60/600,414/1800,480/600,864/1800],
     2:[60/600,360/1800,480/600,450/1800,60/600,900/1800,480/600,450/1800],
@@ -87,10 +62,9 @@ const FRAME_GEOMETRY = {
 
 function printDims(){ return PRINT_SIZES[printSize] || PRINT_SIZES['4x6']; }
 function normalizedSlots(key=selectedFrame,count=shotCount){
-  const frame = FRAME_OPTIONS[key] || FRAME_OPTIONS.classic;
   let geom = FRAME_GEOMETRY[key];
   if (printSize === '2x6') {
-    geom = frame.legacy ? FRAME_GEOMETRY.strip2x6 : FRAME_GEOMETRY.newStrip2x6;
+    geom = FRAME_GEOMETRY.newStrip2x6;
   }
   const a = geom && geom[count];
   if (!a) return [];
@@ -101,9 +75,6 @@ function normalizedSlots(key=selectedFrame,count=shotCount){
 function frameCanvasSpec(){ const s=printDims(); return {w:s.w,h:s.h,slots:normalizedSlots()}; }
 
 const FRAME_OPTIONS = {
-  classic: {name:'Classic Collage', src:'assets/frame-1', legacy:true},
-  strip: {name:'Photo Strip', src:'assets/frame-2', legacy:true},
-  elegant: {name:'Elegant Trio', src:'assets/frame-3', legacy:true},
   botanical: {name:'Botanical Romance', src:'assets/frame-botanical'},
   champagne: {name:'Champagne Luxe', src:'assets/frame-champagne'},
   sage: {name:'Sage Garden', src:'assets/frame-sage'},
@@ -112,7 +83,7 @@ const FRAME_OPTIONS = {
   coastal: {name:'Coastal Pearl', src:'assets/frame-coastal'}
 };
 
-let selectedFrame = 'classic';
+let selectedFrame = 'botanical';
 let stream = null;
 let facingMode = 'user';
 let capturedBlob = null;
@@ -148,11 +119,7 @@ function currentFrame() {
 }
 
 function frameVariantSrc(key=selectedFrame,count=shotCount){
-  const frame = FRAME_OPTIONS[key] || FRAME_OPTIONS.classic;
-  if (frame.legacy) {
-    if(printSize==='2x6') return `assets/frame-2x6-${count}shot.png`;
-    return `${frame.src}-${count}shot-${printSize}.png`;
-  }
+  const frame = FRAME_OPTIONS[key] || FRAME_OPTIONS.botanical;
   return `${frame.src}-${count}shot-${printSize}.png`;
 }
 
@@ -589,7 +556,7 @@ document.querySelectorAll('.print-size-option').forEach(btn => {
       b.classList.toggle('selected', active);
       b.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
-    // Every new wedding frame includes a 2×6 variant; legacy frames keep their original strip asset.
+    // Every wedding frame includes a 2×6 variant.
     frameArt.src = `${frameVariantSrc()}?v=${Date.now()}`;
     setLiveSlotPosition();
     setStatus(`${PRINT_SIZES[printSize].label} · ${shotLabel()} · ${currentFrame().name} ready.`);
