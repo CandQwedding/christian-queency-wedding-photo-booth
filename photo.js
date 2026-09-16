@@ -299,9 +299,12 @@ function captureRawShot() {
   ctx.clip();
 
   if (facingMode === 'user') {
+    // Mirror horizontally so the saved photo matches the mirrored live preview.
+    // In the flipped space a rect drawn at x lands at targetW - x - dw on canvas,
+    // so the left edge must be targetW - dx - dw (not -dx - dw, which drew off-canvas).
     ctx.translate(targetW, 0);
     ctx.scale(-1, 1);
-    ctx.drawImage(video, -dx - dw, dy, dw, dh);
+    ctx.drawImage(video, targetW - dx - dw, dy, dw, dh);
   } else {
     ctx.drawImage(video, dx, dy, dw, dh);
   }
