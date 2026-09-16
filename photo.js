@@ -20,15 +20,80 @@ const PRINT_SIZES = {
 // Geometry matches the NEW transparent frame assets.
 // Each entry is [x, y, width, height] in the actual PNG's pixel coordinates.
 const FRAME_GEOMETRY = {
-  classic: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
-  strip: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
-  elegant: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
-  strip2x6: {1:[0.15,0.18,0.70,0.55],2:[0.15,0.18,0.70,0.27,0.15,0.53,0.70,0.27],3:[0.15,0.17,0.70,0.21,0.15,0.40,0.70,0.21,0.15,0.63,0.70,0.21]}
+  // Exact transparent photo-window geometry measured from the supplied frame PNGs.
+  // Values are normalized to the selected print canvas so the live camera fills
+  // every transparent photo opening instead of sitting inside a smaller box.
+  classic: {
+    1:[179/1800,124/1200,1442/1800,738/1200],
+    2:[179/1800,132/1200,688/1800,707/1200,951/1800,132/1200,670/1800,707/1200],
+    3:[179/1800,135/1200,470/1800,682/1200,724/1800,135/1200,479/1800,682/1200,1279/1800,135/1200,479/1800,682/1200]
+  },
+  strip: {
+    1:[226/1800,252/1200,1362/1800,611/1200],
+    2:[226/1800,255/1200,1362/1800,253/1200,226/1800,546/1200,1362/1800,276/1200],
+    3:[226/1800,233/1200,1362/1800,232/1200,226/1800,493/1200,1362/1800,231/1200,226/1800,753/1200,1362/1800,237/1200]
+  },
+  elegant: {
+    1:[196/1800,141/1200,1385/1800,758/1200],
+    2:[196/1800,154/1200,669/1800,822/1200,920/1800,154/1200,665/1800,822/1200],
+    3:[196/1800,159/1200,437/1800,845/1200,674/1800,159/1200,438/1800,845/1200,1157/1800,159/1200,428/1800,845/1200]
+  },
+  elegant: {
+    1:[196/1800,141/1200,1385/1800,758/1200],
+    2:[196/1800,154/1200,669/1800,822/1200,920/1800,154/1200,665/1800,822/1200],
+    3:[196/1800,159/1200,437/1800,845/1200,674/1800,159/1200,438/1800,845/1200,1157/1800,159/1200,428/1800,845/1200]
+  },
+  botanical: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  champagne: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  sage: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  blush: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  midnight: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  coastal: {
+    1:[180/1800,228/1200,1440/1800,792/1200],
+    2:[162/1800,240/1200,702/1800,768/1200,936/1800,240/1200,702/1800,768/1200],
+    3:[144/1800,240/1200,450/1800,768/1200,675/1800,240/1200,450/1800,768/1200,1206/1800,240/1200,450/1800,768/1200]
+  },
+  strip2x6: {
+    1:[75/600,378/1800,454/600,917/1800],
+    2:[75/600,382/1800,454/600,380/1800,75/600,820/1800,454/600,413/1800],
+    3:[75/600,350/1800,454/600,347/1800,75/600,739/1800,454/600,348/1800,75/600,1129/1800,454/600,356/1800]
+  },
+  newStrip2x6: {
+    1:[60/600,414/1800,480/600,864/1800],
+    2:[60/600,360/1800,480/600,450/1800,60/600,900/1800,480/600,450/1800],
+    3:[60/600,288/1800,480/600,360/1800,60/600,702/1800,480/600,360/1800,60/600,1116/1800,480/600,360/1800]
+  }
 };
 
 function printDims(){ return PRINT_SIZES[printSize] || PRINT_SIZES['4x6']; }
 function normalizedSlots(key=selectedFrame,count=shotCount){
-  const a=(printSize==='2x6'?FRAME_GEOMETRY.strip2x6:FRAME_GEOMETRY[key])[count];
+  const frame = FRAME_OPTIONS[key] || FRAME_OPTIONS.classic;
+  let geom = FRAME_GEOMETRY[key];
+  if (printSize === '2x6') {
+    geom = frame.legacy ? FRAME_GEOMETRY.strip2x6 : FRAME_GEOMETRY.newStrip2x6;
+  }
+  const a = geom && geom[count];
+  if (!a) return [];
   const out=[];
   for(let i=0;i<a.length;i+=4) out.push([a[i]*printDims().w,a[i+1]*printDims().h,a[i+2]*printDims().w,a[i+3]*printDims().h]);
   return out;
@@ -36,9 +101,15 @@ function normalizedSlots(key=selectedFrame,count=shotCount){
 function frameCanvasSpec(){ const s=printDims(); return {w:s.w,h:s.h,slots:normalizedSlots()}; }
 
 const FRAME_OPTIONS = {
-  classic: {name:'Classic Collage', src:'assets/frame-1'},
-  strip: {name:'Photo Strip', src:'assets/frame-2'},
-  elegant: {name:'Elegant Trio', src:'assets/frame-3'}
+  classic: {name:'Classic Collage', src:'assets/frame-1', legacy:true},
+  strip: {name:'Photo Strip', src:'assets/frame-2', legacy:true},
+  elegant: {name:'Elegant Trio', src:'assets/frame-3', legacy:true},
+  botanical: {name:'Botanical Romance', src:'assets/frame-botanical'},
+  champagne: {name:'Champagne Luxe', src:'assets/frame-champagne'},
+  sage: {name:'Sage Garden', src:'assets/frame-sage'},
+  blush: {name:'Blush Love', src:'assets/frame-blush'},
+  midnight: {name:'Midnight Gold', src:'assets/frame-midnight'},
+  coastal: {name:'Coastal Pearl', src:'assets/frame-coastal'}
 };
 
 let selectedFrame = 'classic';
@@ -77,9 +148,12 @@ function currentFrame() {
 }
 
 function frameVariantSrc(key=selectedFrame,count=shotCount){
-  if(printSize==='2x6') return `assets/frame-2x6-${count}shot.png`;
-  const n=key==='classic'?1:key==='strip'?2:3;
-  return `assets/frame-${n}-${count}shot-${printSize}.png`;
+  const frame = FRAME_OPTIONS[key] || FRAME_OPTIONS.classic;
+  if (frame.legacy) {
+    if(printSize==='2x6') return `assets/frame-2x6-${count}shot.png`;
+    return `${frame.src}-${count}shot-${printSize}.png`;
+  }
+  return `${frame.src}-${count}shot-${printSize}.png`;
 }
 
 function framePreviewSrc(key=selectedFrame,count=shotCount){ return frameVariantSrc(key,count); }
@@ -87,10 +161,9 @@ function framePreviewSrc(key=selectedFrame,count=shotCount){ return frameVariant
 function updateFrameImages() {
   document.querySelectorAll('.frame-option').forEach(btn => {
     const img = btn.querySelector('img');
-    const is2x6 = printSize === '2x6';
-    const disabled = is2x6 && btn.dataset.frame !== 'strip';
-    btn.disabled = disabled;
-    btn.classList.toggle('disabled', disabled);
+    const disabled = false;
+    btn.disabled = false;
+    btn.classList.toggle('disabled', false);
     if (img) {
       img.src = `${framePreviewSrc(btn.dataset.frame)}?v=${Date.now()}`;
     }
@@ -516,8 +589,7 @@ document.querySelectorAll('.print-size-option').forEach(btn => {
       b.classList.toggle('selected', active);
       b.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
-    // A 2×6 print is inherently a strip format, so switch to Photo Strip.
-    if (printSize === '2x6' && selectedFrame !== 'strip') updateFrameSelection('strip');
+    // Every new wedding frame includes a 2×6 variant; legacy frames keep their original strip asset.
     frameArt.src = `${frameVariantSrc()}?v=${Date.now()}`;
     setLiveSlotPosition();
     setStatus(`${PRINT_SIZES[printSize].label} · ${shotLabel()} · ${currentFrame().name} ready.`);

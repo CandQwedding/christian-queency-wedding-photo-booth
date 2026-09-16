@@ -74,3 +74,10 @@ body{font-family:"DM Sans",sans-serif;background:radial-gradient(circle at 50% 0
 .photo-preview-actions .photo-button{min-width:150px;min-height:46px}
 .photo-preview-actions #downloadButton{font-weight:700;border-width:2px}
 @media(max-width:700px){.photo-preview-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.photo-preview-actions #downloadButton{grid-column:1/-1;order:-1;min-height:50px}.photo-preview-actions .photo-button{width:100%;min-width:0}}
+
+/* v27: expanded wedding frame library */
+.frame-options .frame-option{position:relative;overflow:hidden;border-radius:12px}
+.frame-options .frame-option img{transition:transform .25s ease,filter .25s ease}
+.frame-options .frame-option:hover img{transform:scale(1.015);filter:saturate(1.05)}
+@media(min-width:1000px){.frame-options{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:520px){.frame-options{grid-template-columns:repeat(2,1fr)}}
