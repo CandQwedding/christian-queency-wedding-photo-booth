@@ -7,11 +7,20 @@ const HASHTAG = '#CenFoundHisQueenCy';
 const FRAME_W = 1600;
 const FRAME_H = 1068;
 let shotCount = 1;
+let printSize = '4x6';
+
+const PRINT_SIZES = {
+  '2x6': {w: 600, h: 1800, label: '2×6 Photo Strip'},
+  '4x6': {w: 1800, h: 1200, label: '4×6 Classic Print'},
+  '5x7': {w: 2100, h: 1500, label: '5×7 Premium Print'},
+  '6x8': {w: 2400, h: 1800, label: '6×8 Large Keepsake'},
+  '8x10': {w: 3000, h: 2400, label: '8×10 Guestbook Print'}
+};
 
 const FRAME_OPTIONS = {
   classic: {
     name: 'Classic Collage',
-    src: 'assets/frame-1.png?v=20260916f',
+    src: 'assets/frame-1',
     slots: [
       {x:500,y:105,w:980,h:460},
       {x:500,y:615,w:455,h:300},
@@ -20,7 +29,7 @@ const FRAME_OPTIONS = {
   },
   strip: {
     name: 'Photo Strip',
-    src: 'assets/frame-2.png?v=20260916f',
+    src: 'assets/frame-2',
     slots: [
       {x:110,y:105,w:700,h:250},
       {x:110,y:385,w:700,h:250},
@@ -29,7 +38,7 @@ const FRAME_OPTIONS = {
   },
   elegant: {
     name: 'Elegant Trio',
-    src: 'assets/frame-3.png?v=20260916f',
+    src: 'assets/frame-3',
     slots: [
       {x:120,y:760,w:420,h:190},
       {x:590,y:760,w:420,h:190},
@@ -61,6 +70,7 @@ const submitBtn = document.getElementById('submitButton');
 const downloadBtn = document.getElementById('downloadButton');
 const status = document.getElementById('photoStatus');
 const frameArt = document.getElementById('frameArt');
+const cameraStage = document.getElementById('cameraStage');
 
 function setStatus(text, type='') {
   status.textContent = text;
@@ -69,6 +79,42 @@ function setStatus(text, type='') {
 
 function currentFrame() {
   return FRAME_OPTIONS[selectedFrame];
+}
+
+function frameVariantSrc(key = selectedFrame, count = shotCount) {
+  if (printSize === '2x6') return `assets/frame-2x6-${count}shot.png`;
+  const frame = FRAME_OPTIONS[key];
+  return `${frame.src}-${count}shot.png`;
+}
+
+function frameCanvasSpec() {
+  if (printSize === '2x6') {
+    return {
+      w: 600, h: 1800,
+      slots: [
+        {x:55,y:250,w:490,h:380},
+        {x:55,y:700,w:490,h:380},
+        {x:55,y:1150,w:490,h:380}
+      ]
+    };
+  }
+  return {w: FRAME_W, h: FRAME_H, slots: currentFrame().slots};
+}
+
+function updateFrameImages() {
+  document.querySelectorAll('.frame-option').forEach(btn => {
+    const img = btn.querySelector('img');
+    const is2x6 = printSize === '2x6';
+    const disabled = is2x6 && btn.dataset.frame !== 'strip';
+    btn.disabled = disabled;
+    btn.classList.toggle('disabled', disabled);
+    if (img) {
+      const previewSrc = is2x6
+        ? `assets/frame-${btn.dataset.frame}-3shot.png`
+        : frameVariantSrc(btn.dataset.frame);
+      img.src = `${previewSrc}?v=${Date.now()}`;
+    }
+  });
 }
 
 function shotLabel(count = shotCount) {
@@ -88,23 +134,27 @@ function updateShotCount(count) {
     btn.classList.toggle('selected', active);
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
+  updateFrameImages();
+  frameArt.src = `${frameVariantSrc()}?v=${Date.now()}`;
+  setLiveSlotPosition();
   updateCaptureButton();
-  setStatus(`${shotLabel()} selected · ${currentFrame().name} ready.`);
+  setStatus(`${PRINT_SIZES[printSize].label} · ${shotLabel()} selected · ${currentFrame().name} ready.`);
 }
 
 function setLiveSlotPosition() {
-  const slot = currentFrame().slots[0];
-  cameraStage.style.setProperty('--live-x', `${slot.x / FRAME_W * 100}%`);
-  cameraStage.style.setProperty('--live-y', `${slot.y / FRAME_H * 100}%`);
-  cameraStage.style.setProperty('--live-w', `${slot.w / FRAME_W * 100}%`);
-  cameraStage.style.setProperty('--live-h', `${slot.h / FRAME_H * 100}%`);
+  const spec = frameCanvasSpec();
+  const slot = spec.slots[0];
+  cameraStage.style.setProperty('--live-x', `${slot.x / spec.w * 100}%`);
+  cameraStage.style.setProperty('--live-y', `${slot.y / spec.h * 100}%`);
+  cameraStage.style.setProperty('--live-w', `${slot.w / spec.w * 100}%`);
+  cameraStage.style.setProperty('--live-h', `${slot.h / spec.h * 100}%`);
 }
 
 function updateFrameSelection(key) {
   if (!FRAME_OPTIONS[key] || capturingSequence) return;
   selectedFrame = key;
   const frame = currentFrame();
-  frameArt.src = `${frame.src}&r=${Date.now()}`;
+  frameArt.src = `${frameVariantSrc(key)}?r=${Date.now()}`;
   setLiveSlotPosition();
 
   document.querySelectorAll('.frame-option').forEach(btn => {
@@ -154,7 +204,7 @@ async function startCamera() {
     captureBtn.disabled = false;
     switchBtn.disabled = false;
     startBtn.textContent = 'Restart camera';
-    setStatus(`${shotLabel()} selected · ${currentFrame().name} ready.`);
+    setStatus(`${PRINT_SIZES[printSize].label} · ${shotLabel()} selected · ${currentFrame().name} ready.`);
   } catch (err) {
     console.error('Camera error:', err);
     const msg = err && err.name === 'NotAllowedError'
@@ -186,7 +236,7 @@ async function runCountdown() {
 }
 
 function captureRawShot() {
-  const slot = currentFrame().slots[0];
+  const slot = frameCanvasSpec().slots[0];
   const canvas = document.createElement('canvas');
   canvas.width = slot.w;
   canvas.height = slot.h;
@@ -243,43 +293,44 @@ function drawCoverImage(ctx, img, box) {
 }
 
 async function makeFinalImage() {
+  const size = PRINT_SIZES[printSize] || PRINT_SIZES['4x6'];
   const canvas = document.createElement('canvas');
-  canvas.width = FRAME_W;
-  canvas.height = FRAME_H;
+  canvas.width = size.w;
+  canvas.height = size.h;
   const ctx = canvas.getContext('2d');
-
   ctx.fillStyle = '#fffdf9';
-  ctx.fillRect(0, 0, FRAME_W, FRAME_H);
+  ctx.fillRect(0, 0, size.w, size.h);
 
-  const frameImg = await loadImage(`${currentFrame().src}&final=${Date.now()}`);
+  const spec = frameCanvasSpec();
+  const frameImg = await loadImage(frameVariantSrc());
+  const sourceRatio = spec.w / spec.h;
+  const targetRatio = size.w / size.h;
+  let drawW, drawH, offsetX, offsetY;
 
-  // Put only the selected number of guest photos into the frame.
-  const slots = currentFrame().slots;
+  // 2×6 has its own true strip artwork. Other sizes preserve the existing frame proportions.
+  if (printSize === '2x6') {
+    drawW = size.w; drawH = size.h; offsetX = 0; offsetY = 0;
+  } else if (targetRatio >= sourceRatio) {
+    drawH = size.h; drawW = drawH * sourceRatio; offsetX = (size.w - drawW) / 2; offsetY = 0;
+  } else {
+    drawW = size.w; drawH = drawW / sourceRatio; offsetX = 0; offsetY = (size.h - drawH) / 2;
+  }
+
+  const sx = drawW / spec.w;
+  const sy = drawH / spec.h;
   for (let i = 0; i < shotCount; i++) {
     const img = await loadImage(shotImages[i]);
-    drawCoverImage(ctx, img, slots[i]);
-  }
-  ctx.drawImage(frameImg, 0, 0, FRAME_W, FRAME_H);
-
-  // Remove unused placeholders for Solo and 2 Shots.
-  if (shotCount < slots.length) {
-    ctx.save();
-    ctx.fillStyle = '#fffdf9';
-    ctx.strokeStyle = '#d9a89a';
-    ctx.lineWidth = 2;
-    for (let i = shotCount; i < slots.length; i++) {
-      const s = slots[i];
-      ctx.fillRect(s.x, s.y, s.w, s.h);
-      ctx.strokeRect(s.x + 1, s.y + 1, s.w - 2, s.h - 2);
-    }
-    ctx.restore();
+    drawCoverImage(ctx, img, {
+      x: offsetX + spec.slots[i].x * sx,
+      y: offsetY + spec.slots[i].y * sy,
+      w: spec.slots[i].w * sx,
+      h: spec.slots[i].h * sy
+    });
   }
 
-  capturedBlob = await new Promise(resolve =>
-    canvas.toBlob(resolve, 'image/jpeg', 0.94)
-  );
+  ctx.drawImage(frameImg, offsetX, offsetY, drawW, drawH);
+  capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.94));
   if (!capturedBlob) throw new Error('Could not create the photo file.');
-
   capturedDataUrl = canvas.toDataURL('image/jpeg', 0.94);
   return capturedDataUrl;
 }
@@ -336,7 +387,7 @@ function redoPhoto() {
   previewActions.classList.remove('show');
   captureBtn.disabled = !stream;
   switchBtn.disabled = !stream;
-  setStatus(`${currentFrame().name} selected — take 3 new shots!`);
+  setStatus(`${PRINT_SIZES[printSize].label} · ${currentFrame().name} selected — ready for ${shotLabel()}!`);
   updateCaptureButton();
 }
 
@@ -345,7 +396,7 @@ function downloadPhoto() {
   const url = URL.createObjectURL(capturedBlob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
+  a.download = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${printSize}_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -373,13 +424,14 @@ async function submitPhoto() {
     try {
       const base64 = String(reader.result).split(',')[1];
       const payload = {
-        filename: `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${Date.now()}.jpg`,
+        filename: `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${printSize}_${Date.now()}.jpg`,
         mimeType: 'image/jpeg',
         base64,
         hashtag: HASHTAG,
         email: WEDDING_EMAIL,
         frame: currentFrame().name,
-        shotCount
+        shotCount,
+        printSize
       };
 
       await fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -410,6 +462,23 @@ document.querySelectorAll('.shot-count-option').forEach(btn => {
   btn.addEventListener('click', () => updateShotCount(btn.dataset.shotCount));
 });
 
+document.querySelectorAll('.print-size-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (capturingSequence) return;
+    printSize = btn.dataset.printSize;
+    document.querySelectorAll('.print-size-option').forEach(b => {
+      const active = b.dataset.printSize === printSize;
+      b.classList.toggle('selected', active);
+      b.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    // A 2×6 print is inherently a strip format, so switch to Photo Strip.
+    if (printSize === '2x6' && selectedFrame !== 'strip') updateFrameSelection('strip');
+    frameArt.src = `${frameVariantSrc()}?v=${Date.now()}`;
+    setLiveSlotPosition();
+    setStatus(`${PRINT_SIZES[printSize].label} · ${shotLabel()} · ${currentFrame().name} ready.`);
+  });
+});
+
 document.querySelectorAll('.frame-option').forEach(btn => {
   btn.addEventListener('click', () => updateFrameSelection(btn.dataset.frame));
 });
@@ -419,6 +488,11 @@ startBtn.addEventListener('click', startCamera);
 window.addEventListener('DOMContentLoaded', () => {
   setLiveSlotPosition();
   updateShotCount(shotCount);
+  document.querySelectorAll('.print-size-option').forEach(btn => {
+    const active = btn.dataset.printSize === printSize;
+    btn.classList.toggle('selected', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
   updateCaptureButton();
   setTimeout(() => startCamera(), 300);
 });
