@@ -6,7 +6,7 @@ const WEDDING_EMAIL = 'queencypineda29@gmail.com';
 const HASHTAG = '#CenFoundHisQueenCy';
 const FRAME_W = 1600;
 const FRAME_H = 1068;
-const SHOT_COUNT = 3;
+let shotCount = 1;
 
 const FRAME_OPTIONS = {
   classic: {
@@ -71,6 +71,27 @@ function currentFrame() {
   return FRAME_OPTIONS[selectedFrame];
 }
 
+function shotLabel(count = shotCount) {
+  return count === 1 ? 'Solo' : `${count} shots`;
+}
+
+function shotNoun(count = shotCount) {
+  return count === 1 ? 'photo' : 'photos';
+}
+
+function updateShotCount(count) {
+  count = Number(count);
+  if (![1, 2, 3].includes(count) || capturingSequence) return;
+  shotCount = count;
+  document.querySelectorAll('.shot-count-option').forEach(btn => {
+    const active = Number(btn.dataset.shotCount) === shotCount;
+    btn.classList.toggle('selected', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  updateCaptureButton();
+  setStatus(`${shotLabel()} selected · ${currentFrame().name} ready.`);
+}
+
 function setLiveSlotPosition() {
   const slot = currentFrame().slots[0];
   cameraStage.style.setProperty('--live-x', `${slot.x / FRAME_W * 100}%`);
@@ -92,12 +113,12 @@ function updateFrameSelection(key) {
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
 
-  setStatus(`${frame.name} selected — camera ready for 3 shots.`);
+  setStatus(`${shotLabel()} selected · ${frame.name} ready.`);
 }
 
 function updateCaptureButton() {
   if (capturingSequence) return;
-  captureBtn.textContent = `Take 3 shots · ${currentFrame().name}`;
+  captureBtn.textContent = `Take ${shotCount} ${shotCount === 1 ? 'shot' : 'shots'} · ${currentFrame().name}`;
 }
 
 function stopCamera() {
@@ -133,7 +154,7 @@ async function startCamera() {
     captureBtn.disabled = false;
     switchBtn.disabled = false;
     startBtn.textContent = 'Restart camera';
-    setStatus(`${currentFrame().name} selected — camera ready for 3 shots.`);
+    setStatus(`${shotLabel()} selected · ${currentFrame().name} ready.`);
   } catch (err) {
     console.error('Camera error:', err);
     const msg = err && err.name === 'NotAllowedError'
@@ -232,15 +253,27 @@ async function makeFinalImage() {
 
   const frameImg = await loadImage(`${currentFrame().src}&final=${Date.now()}`);
 
-  // Put the three guest photos into their slots first, then place the frame artwork
-  // on top. This keeps every border, flower, and text crisp and prevents photos
-  // from covering or duplicating frame text.
+  // Put only the selected number of guest photos into the frame.
   const slots = currentFrame().slots;
-  for (let i = 0; i < SHOT_COUNT; i++) {
+  for (let i = 0; i < shotCount; i++) {
     const img = await loadImage(shotImages[i]);
     drawCoverImage(ctx, img, slots[i]);
   }
   ctx.drawImage(frameImg, 0, 0, FRAME_W, FRAME_H);
+
+  // Remove unused placeholders for Solo and 2 Shots.
+  if (shotCount < slots.length) {
+    ctx.save();
+    ctx.fillStyle = '#fffdf9';
+    ctx.strokeStyle = '#d9a89a';
+    ctx.lineWidth = 2;
+    for (let i = shotCount; i < slots.length; i++) {
+      const s = slots[i];
+      ctx.fillRect(s.x, s.y, s.w, s.h);
+      ctx.strokeRect(s.x + 1, s.y + 1, s.w - 2, s.h - 2);
+    }
+    ctx.restore();
+  }
 
   capturedBlob = await new Promise(resolve =>
     canvas.toBlob(resolve, 'image/jpeg', 0.94)
@@ -265,26 +298,26 @@ async function capturePhoto() {
   booth.classList.remove('capture-mode');
 
   try {
-    for (let i = 0; i < SHOT_COUNT; i++) {
+    for (let i = 0; i < shotCount; i++) {
       const shotNumber = i + 1;
-      setStatus(`Get ready — shot ${shotNumber} of ${SHOT_COUNT}…`);
+      setStatus(`Get ready — shot ${shotNumber} of ${shotCount}…`);
       await new Promise(r => setTimeout(r, 450));
       await runCountdown();
       shotImages.push(captureRawShot());
-      setStatus(`Shot ${shotNumber} of ${SHOT_COUNT} captured!`);
-      if (i < SHOT_COUNT - 1) await new Promise(r => setTimeout(r, 850));
+      setStatus(`Shot ${shotNumber} of ${shotCount} captured!`);
+      if (i < shotCount - 1) await new Promise(r => setTimeout(r, 850));
     }
 
-    setStatus(`Creating your ${currentFrame().name} wedding photo…`);
+    setStatus(`Creating your ${shotLabel()} ${currentFrame().name} wedding photo…`);
     await makeFinalImage();
 
     captured.src = capturedDataUrl;
     booth.classList.add('capture-mode');
     previewActions.classList.add('show');
-    setStatus('Beautiful! Your 3-shot memory is ready. You can redo, download, or submit.');
+    setStatus(`Beautiful! Your ${shotLabel()} memory is ready. You can redo, download, or submit.`);
   } catch (err) {
     console.error(err);
-    setStatus('The 3-shot photo could not be created. Please try again.', 'error');
+    setStatus(`The ${shotLabel()} photo could not be created. Please try again.`, 'error');
     shotImages = [];
   } finally {
     capturingSequence = false;
@@ -312,7 +345,7 @@ function downloadPhoto() {
   const url = URL.createObjectURL(capturedBlob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_3-shot_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
+  a.download = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -340,12 +373,13 @@ async function submitPhoto() {
     try {
       const base64 = String(reader.result).split(',')[1];
       const payload = {
-        filename: `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_3-shot_${Date.now()}.jpg`,
+        filename: `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${Date.now()}.jpg`,
         mimeType: 'image/jpeg',
         base64,
         hashtag: HASHTAG,
         email: WEDDING_EMAIL,
-        frame: currentFrame().name
+        frame: currentFrame().name,
+        shotCount
       };
 
       await fetch(GOOGLE_APPS_SCRIPT_URL, {
@@ -355,10 +389,10 @@ async function submitPhoto() {
         body: JSON.stringify(payload)
       });
 
-      setStatus('Thank you for sharing 3 memories with us! ♡', 'success');
+      setStatus(`Thank you for sharing ${shotCount} ${shotNoun()} with us! ♡`, 'success');
       setTimeout(() => {
         redoPhoto();
-        setStatus('Ready for the next guest — choose a frame and take 3 shots!');
+        setStatus('Ready for the next guest — choose Solo, 2 Shots, or 3 Shots.');
       }, 2600);
     } catch (err) {
       console.error(err);
@@ -372,6 +406,10 @@ async function submitPhoto() {
   reader.readAsDataURL(capturedBlob);
 }
 
+document.querySelectorAll('.shot-count-option').forEach(btn => {
+  btn.addEventListener('click', () => updateShotCount(btn.dataset.shotCount));
+});
+
 document.querySelectorAll('.frame-option').forEach(btn => {
   btn.addEventListener('click', () => updateFrameSelection(btn.dataset.frame));
 });
@@ -380,6 +418,7 @@ startBtn.addEventListener('click', startCamera);
 
 window.addEventListener('DOMContentLoaded', () => {
   setLiveSlotPosition();
+  updateShotCount(shotCount);
   updateCaptureButton();
   setTimeout(() => startCamera(), 300);
 });

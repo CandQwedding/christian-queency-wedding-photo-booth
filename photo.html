@@ -22,26 +22,38 @@
 <p class="eyebrow">A little memory from our day</p>
 <h1>Share a photo <em>with us</em></h1>
 <p class="script">Christian &amp; Queency</p>
-<p>Choose one of our 3 wedding frames, take 3 photos, then submit the finished memory to our shared wedding album.</p>
+<p>Choose Solo, 2 Shots, or 3 Shots, pick a wedding frame, then submit the finished memory to our shared wedding album.</p>
 </section>
 
-<section class="frame-picker" aria-label="Choose your wedding photo frame">
+<section class="frame-picker" aria-label="Choose your photo layout">
   <div class="frame-picker-title">
+    <span>Choose photo layout</span>
+    <small>Pick how many guest photos you want</small>
+  </div>
+  <div class="shot-count-options" role="group" aria-label="Number of photos">
+    <button class="shot-count-option selected" type="button" data-shot-count="1" aria-pressed="true">
+      <strong>Solo</strong><span>1 shot</span>
+    </button>
+    <button class="shot-count-option" type="button" data-shot-count="2" aria-pressed="false">
+      <strong>2 Shots</strong><span>2 photos</span>
+    </button>
+    <button class="shot-count-option" type="button" data-shot-count="3" aria-pressed="false">
+      <strong>3 Shots</strong><span>3 photos</span>
+    </button>
+  </div>
+  <div class="frame-picker-title frame-design-title">
     <span>Choose your frame</span>
-    <small>The couple photo is included in every design</small>
+    <small>The couple photo and wedding details stay in the design</small>
   </div>
   <div class="frame-options">
     <button class="frame-option selected" type="button" data-frame="classic" aria-pressed="true">
-      <img src="assets/frame-1.png" alt="Classic landscape wedding frame">
-      <span>Classic Collage</span>
+      <img src="assets/frame-1.png" alt="Classic landscape wedding frame"><span>Classic Collage</span>
     </button>
     <button class="frame-option" type="button" data-frame="strip" aria-pressed="false">
-      <img src="assets/frame-2.png" alt="Vertical photo strip wedding frame">
-      <span>Photo Strip</span>
+      <img src="assets/frame-2.png" alt="Vertical photo strip wedding frame"><span>Photo Strip</span>
     </button>
     <button class="frame-option" type="button" data-frame="elegant" aria-pressed="false">
-      <img src="assets/frame-3.png" alt="Elegant three-photo wedding frame">
-      <span>Elegant Trio</span>
+      <img src="assets/frame-3.png" alt="Elegant three-photo wedding frame"><span>Elegant Trio</span>
     </button>
   </div>
 </section>
@@ -62,7 +74,7 @@
 <div class="photo-controls">
 <button class="photo-button" id="startCamera" type="button">Start camera</button>
 <button class="photo-button" id="switchCamera" type="button" disabled>Switch camera</button>
-<button class="photo-button primary" id="captureButton" type="button" disabled>Take 3 shots</button>
+<button class="photo-button primary" id="captureButton" type="button" disabled>Take 1 shot</button>
 </div>
 
 <div class="photo-preview-actions" id="previewActions">

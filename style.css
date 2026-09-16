@@ -29,6 +29,14 @@ body{font-family:"DM Sans",sans-serif;background:radial-gradient(circle at 50% 0
 .frame-picker-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px;color:var(--ink)}
 .frame-picker-title span{font:600 14px "Cormorant Garamond",serif;letter-spacing:.08em;text-transform:uppercase}
 .frame-picker-title small{font-size:9px;color:#987267}
+
+.shot-count-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.shot-count-option{appearance:none;border:1px solid rgba(185,120,104,.3);background:rgba(255,255,255,.6);padding:10px 8px;cursor:pointer;color:var(--ink);border-radius:10px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
+.shot-count-option:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(112,76,66,.12)}
+.shot-count-option.selected{border:2px solid var(--rose);background:#fff8f4;box-shadow:0 8px 22px rgba(185,120,104,.18)}
+.shot-count-option strong{display:block;font:600 13px "Cormorant Garamond",serif;letter-spacing:.08em;text-transform:uppercase}
+.shot-count-option span{display:block;margin-top:3px;font-size:9px;color:#987267}
+.frame-design-title{margin-top:2px}
 .frame-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .frame-option{appearance:none;border:1px solid rgba(185,120,104,.3);background:rgba(255,255,255,.55);padding:6px;cursor:pointer;color:var(--ink);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
 .frame-option:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(112,76,66,.12)}
@@ -42,6 +50,10 @@ body{font-family:"DM Sans",sans-serif;background:radial-gradient(circle at 50% 0
   .frame-picker{padding:8px;margin-bottom:10px}
   .frame-picker-title{display:block}
   .frame-picker-title small{display:block;margin-top:3px}
+  .shot-count-options{gap:5px;margin-bottom:9px}
+  .shot-count-option{padding:8px 4px}
+  .shot-count-option strong{font-size:10px}
+  .shot-count-option span{font-size:7px}
   .frame-options{gap:5px}
   .frame-option{padding:4px}
   .frame-option span{font-size:7px;letter-spacing:.08em}
