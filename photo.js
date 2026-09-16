@@ -20,27 +20,20 @@ const PRINT_SIZES = {
 // Geometry matches the NEW transparent frame assets.
 // Each entry is [x, y, width, height] in the actual PNG's pixel coordinates.
 const FRAME_GEOMETRY = {
-  classic: {
-    1: {w:1528,h:982, slots:[[107,58,1297,658]]},
-    2: {w:1535,h:953, slots:[[132,110,605,580],[796,110,605,580]]},
-    3: {w:1527,h:909, slots:[[150,94,375,542],[577,94,376,542],[1005,94,375,542]]}
-  },
-  strip: {
-    1: {w:476,h:971, slots:[[52,145,351,579]]},
-    2: {w:453,h:936, slots:[[47,141,350,230],[47,405,350,294]]},
-    3: {w:438,h:937, slots:[[46,119,338,148],[46,306,338,144],[46,488,338,166]]}
-  },
-  elegant: {
-    1: {w:1546,h:995, slots:[[171,110,1206,637]]},
-    2: {w:1539,h:941, slots:[[164,127,567,574],[800,127,570,574]]},
-    3: {w:1534,h:937, slots:[[172,125,369,547],[602,125,350,547],[1016,125,350,547]]}
-  },
-  strip2x6: {
-    1: {w:447,h:1027, slots:[[46,149,353,619]]},
-    2: {w:446,h:996, slots:[[49,153,349,246],[49,436,349,314]]},
-    3: {w:439,h:1006, slots:[[45,135,335,158],[45,334,335,154],[45,529,335,178]]}
-  }
+  classic: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
+  strip: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
+  elegant: {1:[0.09,0.31,0.82,0.49],2:[0.09,0.30,0.385,0.49,0.525,0.30,0.385,0.49],3:[0.09,0.30,0.26,0.47,0.37,0.30,0.26,0.47,0.65,0.30,0.26,0.47]},
+  strip2x6: {1:[0.15,0.18,0.70,0.55],2:[0.15,0.18,0.70,0.27,0.15,0.53,0.70,0.27],3:[0.15,0.17,0.70,0.21,0.15,0.40,0.70,0.21,0.15,0.63,0.70,0.21]}
 };
+
+function printDims(){ return PRINT_SIZES[printSize] || PRINT_SIZES['4x6']; }
+function normalizedSlots(key=selectedFrame,count=shotCount){
+  const a=(printSize==='2x6'?FRAME_GEOMETRY.strip2x6:FRAME_GEOMETRY[key])[count];
+  const out=[];
+  for(let i=0;i<a.length;i+=4) out.push([a[i]*printDims().w,a[i+1]*printDims().h,a[i+2]*printDims().w,a[i+3]*printDims().h]);
+  return out;
+}
+function frameCanvasSpec(){ const s=printDims(); return {w:s.w,h:s.h,slots:normalizedSlots()}; }
 
 const FRAME_OPTIONS = {
   classic: {name:'Classic Collage', src:'assets/frame-1'},
@@ -83,22 +76,13 @@ function currentFrame() {
   return FRAME_OPTIONS[selectedFrame];
 }
 
-function frameVariantSrc(key = selectedFrame, count = shotCount) {
-  if (printSize === '2x6') return `assets/frame-2x6-${count}shot.png`;
-  return `${FRAME_OPTIONS[key].src}-${count}shot.png`;
+function frameVariantSrc(key=selectedFrame,count=shotCount){
+  if(printSize==='2x6') return `assets/frame-2x6-${count}shot.png`;
+  const n=key==='classic'?1:key==='strip'?2:3;
+  return `assets/frame-${n}-${count}shot-${printSize}.png`;
 }
 
-function frameCanvasSpec() {
-  const geometry = printSize === '2x6'
-    ? FRAME_GEOMETRY.strip2x6[shotCount]
-    : FRAME_GEOMETRY[selectedFrame][shotCount];
-  return geometry;
-}
-
-function framePreviewSrc(key = selectedFrame, count = shotCount) {
-  if (printSize === '2x6') return 'assets/frame-2x6-3shot.png';
-  return `${FRAME_OPTIONS[key].src}-${count}shot.png`;
-}
+function framePreviewSrc(key=selectedFrame,count=shotCount){ return frameVariantSrc(key,count); }
 
 function updateFrameImages() {
   document.querySelectorAll('.frame-option').forEach(btn => {
@@ -227,35 +211,55 @@ function showCountdown(number) {
   countdown.classList.add('show');
 }
 
+function clearCountdown() {
+  countdown.classList.remove('show');
+  countdown.textContent = '';
+}
+
 async function runCountdown() {
-  for (const n of [3,2,1]) {
+  clearCountdown();
+  for (const n of [3, 2, 1]) {
     showCountdown(n);
     await new Promise(r => setTimeout(r, 900));
+    // Never leave the last number on screen if capture/compositing takes time.
+    clearCountdown();
+    if (n !== 1) await new Promise(r => requestAnimationFrame(() => r()));
   }
 }
 
 function captureRawShot() {
   const slot = frameCanvasSpec().slots[0];
+  if (!slot || slot.length < 4) throw new Error('The selected frame has no valid photo area.');
+
+  const [, , slotW, slotH] = slot;
+  const aspect = slotW / slotH;
+  // Capture above the frame's preview resolution so the final print remains sharp.
+  const targetW = Math.min(1920, Math.max(800, Math.round(slotW * 1.5)));
+  const targetH = Math.round(targetW / aspect);
+
   const canvas = document.createElement('canvas');
-  canvas.width = slot.w;
-  canvas.height = slot.h;
-  const ctx = canvas.getContext('2d');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d', {alpha:false});
+  if (!ctx) throw new Error('Camera capture canvas is unavailable.');
 
   const vw = video.videoWidth || 1280;
   const vh = video.videoHeight || 720;
-  const scale = Math.max(slot.w / vw, slot.h / vh);
+  const scale = Math.max(targetW / vw, targetH / vh);
   const dw = vw * scale;
   const dh = vh * scale;
-  const dx = (slot.w - dw) / 2;
-  const dy = (slot.h - dh) / 2;
+  const dx = (targetW - dw) / 2;
+  const dy = (targetH - dh) / 2;
 
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
   ctx.save();
   ctx.beginPath();
-  ctx.rect(0, 0, slot.w, slot.h);
+  ctx.rect(0, 0, targetW, targetH);
   ctx.clip();
 
   if (facingMode === 'user') {
-    ctx.translate(slot.w, 0);
+    ctx.translate(targetW, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, -dx - dw, dy, dw, dh);
   } else {
@@ -263,7 +267,7 @@ function captureRawShot() {
   }
   ctx.restore();
 
-  return canvas.toDataURL('image/jpeg', 0.94);
+  return canvas.toDataURL('image/jpeg', 0.96);
 }
 
 function loadImage(src) {
@@ -314,9 +318,7 @@ async function makeFinalImage() {
     throw new Error(`Missing photo slots for ${shotCount} shot(s).`);
   }
 
-  const frameSrc = printSize === '2x6'
-    ? `assets/frame-2x6-${shotCount}shot.png`
-    : `${FRAME_OPTIONS[selectedFrame].src}-${shotCount}shot.png`;
+  const frameSrc = frameVariantSrc();
   const frameImg = await loadImage(frameSrc);
   if (!frameImg.naturalWidth || !frameImg.naturalHeight) {
     throw new Error(`Frame asset could not be loaded: ${frameSrc}`);
@@ -334,14 +336,14 @@ async function makeFinalImage() {
     const img = await loadImage(shotImages[i]);
     if (!img.naturalWidth || !img.naturalHeight) throw new Error(`Captured image ${i + 1} is empty.`);
     const slot = spec.slots[i];
-    drawCoverImage(ctx, img, {x:slot.x*sx, y:slot.y*sy, w:slot.w*sx, h:slot.h*sy});
+    drawCoverImage(ctx, img, {x:slot[0]*sx, y:slot[1]*sy, w:slot[2]*sx, h:slot[3]*sy});
   }
 
   ctx.drawImage(frameImg, 0, 0, size.w, size.h);
 
   // Use one blob for preview/download/upload. Avoid a second huge base64
   // conversion, which can fail on mobile browsers due to memory pressure.
-  capturedBlob = await canvasToBlob(canvas, 'image/jpeg', 0.94);
+  capturedBlob = await canvasToBlob(canvas, 'image/jpeg', 0.97);
   if (!capturedBlob || capturedBlob.size < 1000) {
     throw new Error('The browser could not encode the finished photo.');
   }
@@ -371,6 +373,12 @@ async function capturePhoto() {
       setStatus(`Get ready — shot ${shotNumber} of ${shotCount}…`);
       await new Promise(r => setTimeout(r, 450));
       await runCountdown();
+      // Ensure the countdown overlay is completely gone before reading the camera frame.
+      clearCountdown();
+      await new Promise(r => requestAnimationFrame(() => r()));
+      if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !video.videoWidth || !video.videoHeight) {
+        throw new Error('Camera video is not ready. Please restart the camera and try again.');
+      }
       shotImages.push(captureRawShot());
       setStatus(`Shot ${shotNumber} of ${shotCount} captured!`);
       if (i < shotCount - 1) await new Promise(r => setTimeout(r, 850));
@@ -384,6 +392,7 @@ async function capturePhoto() {
     previewActions.classList.add('show');
     setStatus(`Beautiful! Your ${shotLabel()} memory is ready. You can redo, download, or submit.`);
   } catch (err) {
+    clearCountdown();
     console.error(err);
     const detail = err?.message ? ` (${err.message})` : '';
     setStatus(`The ${shotLabel()} photo could not be created. Please try again.${detail}`, 'error');
