@@ -53,6 +53,7 @@ let stream = null;
 let facingMode = 'user';
 let capturedBlob = null;
 let capturedDataUrl = null;
+let capturedPreviewUrl = null;
 let shotImages = [];
 let busy = false;
 let capturingSequence = false;
@@ -290,39 +291,65 @@ function drawCoverImage(ctx, img, box) {
   ctx.restore();
 }
 
+function canvasToBlob(canvas, type='image/jpeg', quality=0.94) {
+  return new Promise((resolve, reject) => {
+    try {
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('The browser returned an empty photo file.')), type, quality);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 async function makeFinalImage() {
   const size = PRINT_SIZES[printSize] || PRINT_SIZES['4x6'];
   const canvas = document.createElement('canvas');
   canvas.width = size.w;
   canvas.height = size.h;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', {alpha:false});
+  if (!ctx) throw new Error('Canvas is not available on this device.');
 
-  // Every print size is filled edge-to-edge. The selected frame is scaled
-  // to the exact print dimensions, and the photo windows scale with it.
   const spec = frameCanvasSpec();
+  if (!spec.slots || spec.slots.length < shotCount) {
+    throw new Error(`Missing photo slots for ${shotCount} shot(s).`);
+  }
+
   const frameSrc = printSize === '2x6'
     ? `assets/frame-2x6-${shotCount}shot.png`
     : `${FRAME_OPTIONS[selectedFrame].src}-${shotCount}shot.png`;
   const frameImg = await loadImage(frameSrc);
+  if (!frameImg.naturalWidth || !frameImg.naturalHeight) {
+    throw new Error(`Frame asset could not be loaded: ${frameSrc}`);
+  }
+
+  // Fill the output background first, then place each captured camera image
+  // into its exact transparent window, and finally place the frame artwork on top.
+  ctx.fillStyle = '#fffdf9';
+  ctx.fillRect(0, 0, size.w, size.h);
 
   const sx = size.w / spec.w;
   const sy = size.h / spec.h;
-
   for (let i = 0; i < shotCount; i++) {
+    if (!shotImages[i]) throw new Error(`Missing captured image ${i + 1}.`);
     const img = await loadImage(shotImages[i]);
-    const [x,y,w,h] = spec.slots[i];
-    drawCoverImage(ctx, img, {
-      x:x*sx, y:y*sy, w:w*sx, h:h*sy
-    });
+    if (!img.naturalWidth || !img.naturalHeight) throw new Error(`Captured image ${i + 1} is empty.`);
+    const slot = spec.slots[i];
+    drawCoverImage(ctx, img, {x:slot.x*sx, y:slot.y*sy, w:slot.w*sx, h:slot.h*sy});
   }
 
-  // Transparent frame artwork sits above the camera photos.
   ctx.drawImage(frameImg, 0, 0, size.w, size.h);
 
-  capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.94));
-  if (!capturedBlob) throw new Error('Could not create the photo file.');
-  capturedDataUrl = canvas.toDataURL('image/jpeg', 0.94);
-  return capturedDataUrl;
+  // Use one blob for preview/download/upload. Avoid a second huge base64
+  // conversion, which can fail on mobile browsers due to memory pressure.
+  capturedBlob = await canvasToBlob(canvas, 'image/jpeg', 0.94);
+  if (!capturedBlob || capturedBlob.size < 1000) {
+    throw new Error('The browser could not encode the finished photo.');
+  }
+
+  if (capturedPreviewUrl) URL.revokeObjectURL(capturedPreviewUrl);
+  capturedPreviewUrl = URL.createObjectURL(capturedBlob);
+  capturedDataUrl = null;
+  return capturedPreviewUrl;
 }
 
 async function capturePhoto() {
@@ -352,13 +379,14 @@ async function capturePhoto() {
     setStatus(`Creating your ${shotLabel()} ${currentFrame().name} wedding photo…`);
     await makeFinalImage();
 
-    captured.src = capturedDataUrl;
+      captured.src = capturedPreviewUrl;
     booth.classList.add('capture-mode');
     previewActions.classList.add('show');
     setStatus(`Beautiful! Your ${shotLabel()} memory is ready. You can redo, download, or submit.`);
   } catch (err) {
     console.error(err);
-    setStatus(`The ${shotLabel()} photo could not be created. Please try again.`, 'error');
+    const detail = err?.message ? ` (${err.message})` : '';
+    setStatus(`The ${shotLabel()} photo could not be created. Please try again.${detail}`, 'error');
     shotImages = [];
   } finally {
     capturingSequence = false;
@@ -372,6 +400,7 @@ async function capturePhoto() {
 function redoPhoto() {
   capturedBlob = null;
   capturedDataUrl = null;
+  if (capturedPreviewUrl) { URL.revokeObjectURL(capturedPreviewUrl); capturedPreviewUrl = null; }
   shotImages = [];
   booth.classList.remove('capture-mode');
   previewActions.classList.remove('show');
@@ -381,16 +410,33 @@ function redoPhoto() {
   updateCaptureButton();
 }
 
-function downloadPhoto() {
-  if (!capturedBlob) return;
+async function downloadPhoto() {
+  if (!capturedBlob) {
+    setStatus('Finish taking the photo first, then tap Download photo.', 'error');
+    return;
+  }
+
+  const filename = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${printSize}_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
   const url = URL.createObjectURL(capturedBlob);
+
+  // Keep the download action tied directly to the user's tap. This works
+  // reliably on Chrome/Android and desktop browsers.
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Christian-Queency_${currentFrame().name.replace(/\s+/g,'-')}_${shotCount}-shot_${printSize}_${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`;
+  a.download = filename;
+  a.rel = 'noopener';
+  a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  // Some mobile browsers ignore the download attribute. Give the guest a
+  // direct image tab as a fallback so the picture can still be saved.
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 10000);
+
+  setStatus(`Download started · ${printSize} · ${shotLabel()}.`, 'success');
 }
 
 async function submitPhoto() {

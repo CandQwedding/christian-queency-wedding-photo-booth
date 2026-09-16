@@ -68,3 +68,9 @@ body{font-family:"DM Sans",sans-serif;background:radial-gradient(circle at 50% 0
 .print-size-option span{display:block;margin-top:3px;font-size:8px;color:#987267}
 @media(max-width:720px){.print-size-options{grid-template-columns:repeat(3,1fr);gap:5px}.print-size-option{padding:8px 4px}.print-size-option strong{font-size:10px}.print-size-option span{font-size:7px}}
 .frame-option.disabled{opacity:.42;filter:grayscale(.2);cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* v20: make the finished-photo actions unmistakable on mobile and desktop */
+.photo-preview-actions.show{display:flex!important;align-items:center;justify-content:center;margin:0 auto;padding:16px 8px 4px;gap:10px;position:relative;z-index:30}
+.photo-preview-actions .photo-button{min-width:150px;min-height:46px}
+.photo-preview-actions #downloadButton{font-weight:700;border-width:2px}
+@media(max-width:700px){.photo-preview-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.photo-preview-actions #downloadButton{grid-column:1/-1;order:-1;min-height:50px}.photo-preview-actions .photo-button{width:100%;min-width:0}}
