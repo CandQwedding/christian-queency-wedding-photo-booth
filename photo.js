@@ -17,34 +17,35 @@ const PRINT_SIZES = {
   '8x10': {w: 3000, h: 2400, label: '8×10 Guestbook Print'}
 };
 
-const FRAME_OPTIONS = {
+// Geometry matches the NEW transparent frame assets.
+// Each entry is [x, y, width, height] in the actual PNG's pixel coordinates.
+const FRAME_GEOMETRY = {
   classic: {
-    name: 'Classic Collage',
-    src: 'assets/frame-1',
-    slotsByCount: {
-      1: [{x:142,y:110,w:1320,h:690}],
-      2: [{x:142,y:120,w:610,h:660},{x:848,y:120,w:610,h:660}],
-      3: [{x:148,y:108,w:395,h:670},{x:603,y:108,w:395,h:670},{x:1058,y:108,w:395,h:670}]
-    }
+    1: {w:1528,h:982, slots:[[107,58,1297,658]]},
+    2: {w:1535,h:953, slots:[[132,110,605,580],[796,110,605,580]]},
+    3: {w:1527,h:909, slots:[[150,94,375,542],[577,94,376,542],[1005,94,375,542]]}
   },
   strip: {
-    name: 'Photo Strip',
-    src: 'assets/frame-2',
-    slotsByCount: {
-      1: [{x:545,y:230,w:510,h:500}],
-      2: [{x:545,y:190,w:510,h:250},{x:545,y:505,w:510,h:250}],
-      3: [{x:545,y:160,w:510,h:205},{x:545,y:385,w:510,h:205},{x:545,y:610,w:510,h:205}]
-    }
+    1: {w:476,h:971, slots:[[52,145,351,579]]},
+    2: {w:453,h:936, slots:[[47,141,350,230],[47,405,350,294]]},
+    3: {w:438,h:937, slots:[[46,119,338,148],[46,306,338,144],[46,488,338,166]]}
   },
   elegant: {
-    name: 'Elegant Trio',
-    src: 'assets/frame-3',
-    slotsByCount: {
-      1: [{x:205,y:150,w:1190,h:610}],
-      2: [{x:155,y:155,w:585,h:610},{x:860,y:155,w:585,h:610}],
-      3: [{x:152,y:150,w:400,h:620},{x:600,y:150,w:400,h:620},{x:1048,y:150,w:400,h:620}]
-    }
+    1: {w:1546,h:995, slots:[[171,110,1206,637]]},
+    2: {w:1539,h:941, slots:[[164,127,567,574],[800,127,570,574]]},
+    3: {w:1534,h:937, slots:[[172,125,369,547],[602,125,350,547],[1016,125,350,547]]}
+  },
+  strip2x6: {
+    1: {w:447,h:1027, slots:[[46,149,353,619]]},
+    2: {w:446,h:996, slots:[[49,153,349,246],[49,436,349,314]]},
+    3: {w:439,h:1006, slots:[[45,135,335,158],[45,334,335,154],[45,529,335,178]]}
   }
+};
+
+const FRAME_OPTIONS = {
+  classic: {name:'Classic Collage', src:'assets/frame-1'},
+  strip: {name:'Photo Strip', src:'assets/frame-2'},
+  elegant: {name:'Elegant Trio', src:'assets/frame-3'}
 };
 
 let selectedFrame = 'classic';
@@ -83,21 +84,19 @@ function currentFrame() {
 
 function frameVariantSrc(key = selectedFrame, count = shotCount) {
   if (printSize === '2x6') return `assets/frame-2x6-${count}shot.png`;
-  const frame = FRAME_OPTIONS[key];
-  return `${frame.src}-${count}shot.png`;
+  return `${FRAME_OPTIONS[key].src}-${count}shot.png`;
 }
 
 function frameCanvasSpec() {
-  if (printSize === '2x6') {
-    const slotsByCount = {
-      1: [{x:103,y:245,w:394,h:500}],
-      2: [{x:103,y:205,w:394,h:260},{x:103,y:520,w:394,h:260}],
-      3: [{x:103,y:175,w:394,h:215},{x:103,y:405,w:394,h:215},{x:103,y:635,w:394,h:215}]
-    };
-    return {w: 600, h: 1800, slots: slotsByCount[shotCount]};
-  }
-  const slots = currentFrame().slotsByCount?.[shotCount] || [];
-  return {w: FRAME_W, h: FRAME_H, slots};
+  const geometry = printSize === '2x6'
+    ? FRAME_GEOMETRY.strip2x6[shotCount]
+    : FRAME_GEOMETRY[selectedFrame][shotCount];
+  return geometry;
+}
+
+function framePreviewSrc(key = selectedFrame, count = shotCount) {
+  if (printSize === '2x6') return 'assets/frame-2x6-3shot.png';
+  return `${FRAME_OPTIONS[key].src}-${count}shot.png`;
 }
 
 function updateFrameImages() {
@@ -108,10 +107,7 @@ function updateFrameImages() {
     btn.disabled = disabled;
     btn.classList.toggle('disabled', disabled);
     if (img) {
-      const previewSrc = is2x6
-        ? `assets/frame-${btn.dataset.frame}-3shot.png`
-        : frameVariantSrc(btn.dataset.frame);
-      img.src = `${previewSrc}?v=${Date.now()}`;
+      img.src = `${framePreviewSrc(btn.dataset.frame)}?v=${Date.now()}`;
     }
   });
 }
@@ -143,10 +139,13 @@ function updateShotCount(count) {
 function setLiveSlotPosition() {
   const spec = frameCanvasSpec();
   const slot = spec.slots[0];
-  cameraStage.style.setProperty('--live-x', `${slot.x / spec.w * 100}%`);
-  cameraStage.style.setProperty('--live-y', `${slot.y / spec.h * 100}%`);
-  cameraStage.style.setProperty('--live-w', `${slot.w / spec.w * 100}%`);
-  cameraStage.style.setProperty('--live-h', `${slot.h / spec.h * 100}%`);
+  if (!slot) return;
+
+  cameraStage.style.setProperty('--live-x', `${slot[0] / spec.w * 100}%`);
+  cameraStage.style.setProperty('--live-y', `${slot[1] / spec.h * 100}%`);
+  cameraStage.style.setProperty('--live-w', `${slot[2] / spec.w * 100}%`);
+  cameraStage.style.setProperty('--live-h', `${slot[3] / spec.h * 100}%`);
+  cameraStage.style.aspectRatio = `${spec.w} / ${spec.h}`;
 }
 
 function updateFrameSelection(key) {
@@ -297,37 +296,29 @@ async function makeFinalImage() {
   canvas.width = size.w;
   canvas.height = size.h;
   const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fffdf9';
-  ctx.fillRect(0, 0, size.w, size.h);
 
+  // Every print size is filled edge-to-edge. The selected frame is scaled
+  // to the exact print dimensions, and the photo windows scale with it.
   const spec = frameCanvasSpec();
-  const frameImg = await loadImage(frameVariantSrc());
-  const sourceRatio = spec.w / spec.h;
-  const targetRatio = size.w / size.h;
-  let drawW, drawH, offsetX, offsetY;
+  const frameSrc = printSize === '2x6'
+    ? `assets/frame-2x6-${shotCount}shot.png`
+    : `${FRAME_OPTIONS[selectedFrame].src}-${shotCount}shot.png`;
+  const frameImg = await loadImage(frameSrc);
 
-  // 2×6 has its own true strip artwork. Other sizes preserve the existing frame proportions.
-  if (printSize === '2x6') {
-    drawW = size.w; drawH = size.h; offsetX = 0; offsetY = 0;
-  } else if (targetRatio >= sourceRatio) {
-    drawH = size.h; drawW = drawH * sourceRatio; offsetX = (size.w - drawW) / 2; offsetY = 0;
-  } else {
-    drawW = size.w; drawH = drawW / sourceRatio; offsetX = 0; offsetY = (size.h - drawH) / 2;
-  }
+  const sx = size.w / spec.w;
+  const sy = size.h / spec.h;
 
-  const sx = drawW / spec.w;
-  const sy = drawH / spec.h;
   for (let i = 0; i < shotCount; i++) {
     const img = await loadImage(shotImages[i]);
+    const [x,y,w,h] = spec.slots[i];
     drawCoverImage(ctx, img, {
-      x: offsetX + spec.slots[i].x * sx,
-      y: offsetY + spec.slots[i].y * sy,
-      w: spec.slots[i].w * sx,
-      h: spec.slots[i].h * sy
+      x:x*sx, y:y*sy, w:w*sx, h:h*sy
     });
   }
 
-  ctx.drawImage(frameImg, offsetX, offsetY, drawW, drawH);
+  // Transparent frame artwork sits above the camera photos.
+  ctx.drawImage(frameImg, 0, 0, size.w, size.h);
+
   capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.94));
   if (!capturedBlob) throw new Error('Could not create the photo file.');
   capturedDataUrl = canvas.toDataURL('image/jpeg', 0.94);
