@@ -21,28 +21,28 @@ const FRAME_OPTIONS = {
   classic: {
     name: 'Classic Collage',
     src: 'assets/frame-1',
-    slots: [
-      {x:500,y:105,w:980,h:460},
-      {x:500,y:615,w:455,h:300},
-      {x:1025,y:615,w:455,h:300}
-    ]
+    slotsByCount: {
+      1: [{x:142,y:110,w:1320,h:690}],
+      2: [{x:142,y:120,w:610,h:660},{x:848,y:120,w:610,h:660}],
+      3: [{x:148,y:108,w:395,h:670},{x:603,y:108,w:395,h:670},{x:1058,y:108,w:395,h:670}]
+    }
   },
   strip: {
     name: 'Photo Strip',
     src: 'assets/frame-2',
     slotsByCount: {
-      1: [{x:500,y:145,w:600,h:675}],
-      2: [{x:500,y:115,w:600,h:330},{x:500,y:585,w:600,h:330}],
-      3: [{x:500,y:80,w:600,h:255},{x:500,y:405,w:600,h:255},{x:500,y:730,w:600,h:255}]
+      1: [{x:545,y:230,w:510,h:500}],
+      2: [{x:545,y:190,w:510,h:250},{x:545,y:505,w:510,h:250}],
+      3: [{x:545,y:160,w:510,h:205},{x:545,y:385,w:510,h:205},{x:545,y:610,w:510,h:205}]
     }
   },
   elegant: {
     name: 'Elegant Trio',
     src: 'assets/frame-3',
     slotsByCount: {
-      1: [{x:170,y:115,w:1260,h:720}],
-      2: [{x:120,y:145,w:635,h:690},{x:845,y:145,w:635,h:690}],
-      3: [{x:105,y:145,w:450,h:690},{x:575,y:145,w:450,h:690},{x:1045,y:145,w:450,h:690}]
+      1: [{x:205,y:150,w:1190,h:610}],
+      2: [{x:155,y:155,w:585,h:610},{x:860,y:155,w:585,h:610}],
+      3: [{x:152,y:150,w:400,h:620},{x:600,y:150,w:400,h:620},{x:1048,y:150,w:400,h:620}]
     }
   }
 };
@@ -89,16 +89,14 @@ function frameVariantSrc(key = selectedFrame, count = shotCount) {
 
 function frameCanvasSpec() {
   if (printSize === '2x6') {
-    return {
-      w: 600, h: 1800,
-      slots: [
-        {x:55,y:250,w:490,h:380},
-        {x:55,y:700,w:490,h:380},
-        {x:55,y:1150,w:490,h:380}
-      ]
+    const slotsByCount = {
+      1: [{x:103,y:245,w:394,h:500}],
+      2: [{x:103,y:205,w:394,h:260},{x:103,y:520,w:394,h:260}],
+      3: [{x:103,y:175,w:394,h:215},{x:103,y:405,w:394,h:215},{x:103,y:635,w:394,h:215}]
     };
+    return {w: 600, h: 1800, slots: slotsByCount[shotCount]};
   }
-  const slots = currentFrame().slotsByCount?.[shotCount] || currentFrame().slotsByCount?.[3] || [];
+  const slots = currentFrame().slotsByCount?.[shotCount] || [];
   return {w: FRAME_W, h: FRAME_H, slots};
 }
 
